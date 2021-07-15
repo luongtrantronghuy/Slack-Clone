@@ -17,7 +17,7 @@ paths:
     get:
       description: Dummy Endpoint
       responses:
-        200:
+        201:
           description: Succesful
           content:
             application/json:
