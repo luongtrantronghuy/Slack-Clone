@@ -9,7 +9,7 @@ const pool = new Pool({
 });
 
 exports.selectAllChannels = async (channel) => {
-  let select = 'SELECT id, channel, messages FROM channels';
+  let select = 'SELECT id, channel, messages, thread FROM channels';
   if (channel) {
     select += ` WHERE channel = '${channel}'`;
   }
@@ -20,7 +20,8 @@ exports.selectAllChannels = async (channel) => {
   const channels = [];
 
   for (row of rows) {
-    row.messages = {id: row.id, ...row.messages};
+    row.thread = row.thread.map(msg => JSON.parse(msg));
+    row.messages = {id: row.id, ...row.messages, thread: row.thread};
     if (channels.length == 0) {
       channels.push({name: row.channel, messages: [row.messages]});
     } else {

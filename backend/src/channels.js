@@ -1,5 +1,12 @@
 const db = require('./db');
 
+/**
+ * Returns all the channels and their messages (similar to getAllMails)
+ * (missing) thread
+ *
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getAll = async (req, res) => {
   const channels = await db.selectAllChannels(req.query.channel);
   if (channels.length == 0) {
