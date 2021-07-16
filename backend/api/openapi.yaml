@@ -14,9 +14,9 @@ servers:
   - url: http://localhost:3010/v0
 
 paths:
-  /dummy:
+  /v0/channels:
     get:
-      description: Dummy Endpoint
+      description: Get messages from channel
       responses:
         200:
           description: Succesful

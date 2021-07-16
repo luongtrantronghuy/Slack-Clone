@@ -1,5 +1,3 @@
--- Dummy table --
-DROP TABLE IF EXISTS dummy;
-CREATE TABLE dummy(created TIMESTAMP WITH TIME ZONE);
-
+DROP TABLE IF EXISTS channels;
 -- Your database schema goes here --
+CREATE TABLE channels(id UUID UNIQUE PRIMARY KEY DEFAULT gen_random_uuid(), channel VARCHAR(32), messages jsonb, thread jsonb[]);
