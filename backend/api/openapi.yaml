@@ -14,16 +14,29 @@ servers:
   - url: http://localhost:3010/v0
 
 paths:
-  /v0/channels:
+  /channels:
     get:
       description: Get messages from channel
+      parameters:
+        - in: query
+          name: channel
+          schema:
+            type: string
+          required: false
+          description: Name of channel
       responses:
         200:
           description: Succesful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DummyResponse'
+                $ref: '#/components/schemas/AllChannels'
+        404:
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         default:
           description: unexpected error
           content:
@@ -44,9 +57,31 @@ components:
         message:
           type: string
 
-    DummyResponse:
-      required:
-        - message
+    AllChannels:
+      type: array
+      items:
+        $ref: '#/components/schemas/ChannelResponse'
+
+    ChannelResponse:
+      type: object
       properties:
         message:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+
+    Message:
+      type: object
+      properties:
+        id:
           type: string
+        content:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        sent-at:
+          type: string
+        thread:
+          type: array
