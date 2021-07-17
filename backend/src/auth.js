@@ -10,7 +10,7 @@ exports.authenticate = async (req, res) => {
   let check = false;
   if (user) {
     check = (user.username === username) &&
-      (bcrypt.compareSync(password, user.password));
+      (bcrypt.compareSync(password, user.info.password));
   }
   if (check) {
     const accessToken = jwt.sign(
@@ -19,7 +19,6 @@ exports.authenticate = async (req, res) => {
           expiresIn: '30m',
           algorithm: 'HS256',
         });
-    console.log({name: user.name, accessToken: accessToken});
     res.status(200).json({name: user.name, accessToken: accessToken});
   } else {
     res.status(401).send('Username or password incorrect');

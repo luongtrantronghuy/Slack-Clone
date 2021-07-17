@@ -62,8 +62,8 @@ exports.selectAllChannels = async (channel) => {
 };
 
 exports.find = async (username) => {
-  const select = `SELECT username, password FROM users
-    WHERE user-name = ${username}`;
+  const select = `SELECT username, info FROM users
+    WHERE username = '${username}'`;
   const query = {
     text: select,
   };
@@ -71,7 +71,7 @@ exports.find = async (username) => {
   if (rows.length == 0) {
     return undefined;
   } else {
-    return rows;
+    return rows[0];
   }
 };
 
