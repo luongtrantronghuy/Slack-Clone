@@ -4,7 +4,7 @@ var bcrypt = require('bcrypt');
 const secrets = require('../data/secrets');
 const db = require('./db');
 
-exports.login = async (req, res) => {
+exports.authenticate = async (req, res) => {
   const {username, password} = req.body;
   const user = db.find((user) => {
     return user.username === username &&
