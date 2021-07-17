@@ -6,17 +6,20 @@ const db = require('./db');
 
 exports.authenticate = async (req, res) => {
   const {username, password} = req.body;
-  const user = db.find((user) => {
-    return user.username === username &&
-    bcrypt.compareSync(password, user.password);
-  });
+  const user = await db.find(username);
+  let check = false;
   if (user) {
+    check = (user.username === username) &&
+      (bcrypt.compareSync(password, user.password));
+  }
+  if (check) {
     const accessToken = jwt.sign(
       {username: user.username, role: user.role},
       secrets.accessToken, {
         expiresIn: '30m',
         algorithm: 'HS256'
       });
+    console.log({name: user.name, accessToken: accessToken});
     res.status(200).json({name: user.name, accessToken: accessToken});
   } else {
     res.status(401).send('Username or password incorrect');

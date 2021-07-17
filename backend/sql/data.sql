@@ -19,9 +19,9 @@ INSERT INTO channels(channel, messages, thread) VALUES ('dm','{"content": "Hi Mo
 -- User Table --
 -- {
 --   "name": "string"
---   "user-name": "string"
+--   "username": "string"
 --   "password": "string"
 -- }
 DELETE FROM users;
-INSERT INTO users(info) VALUES ('{"name": "Molly Member", "user-name": "Molly Member123", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}');
-INSERT INTO users(info) VALUES ('{"name": "Anna Admin", "user-name": "anna", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.G1ohpR3oQbbBHK4KzX7dU219Pv/lzze"}');
+INSERT INTO users(info) VALUES ('{"name": "Molly Member", "username": "Molly Member123", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}');
+INSERT INTO users(info) VALUES ('{"name": "Anna Admin", "username": "anna", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.G1ohpR3oQbbBHK4KzX7dU219Pv/lzze"}');
