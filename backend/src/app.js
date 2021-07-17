@@ -33,6 +33,11 @@ app.use(
 app.get('/v0/channels', auth.check, channels.getAll);
 app.post('/v0/channels/:channel:thread', auth.check, channels.sendMessage);
 
+// These all for testing backend ONLY (no auth.check)
+// not until we get the login working on front end
+// app.get('/v0/channels', channels.getAll);
+// app.post('/v0/channels/:channel:thread', channels.sendMessage);
+
 app.use((err, req, res, next) => {
   res.status(err.status).json({
     message: err.message,

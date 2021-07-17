@@ -68,9 +68,13 @@ paths:
               $ref: '#/components/schemas/NewMessage'
       responses:
         201:
-          description: EMail Response
+          description: Message Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
         400:
-          description: Mailbox not found
+          description: Thread not found
           content:
             application/json:
               schema:
@@ -134,6 +138,20 @@ components:
           type: string
         thread:
           type: array
+          items:
+            $ref: '#/components/schemas/Thread'
+
+    Thread:
+      type: object
+      properties:
+        content:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        sent:
+          type: string
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
