@@ -48,17 +48,17 @@ paths:
     post:
       description: Send New Message
       parameters:
-        - in: path
-          name: channel
-          schema:
-            type: string
-          required: true
-          description: Name of channel
-        - in: query
-          name: thread
-          schema:
-            type: string
-          required: false
+      - name: channel
+        in: path
+        description: Name of channel
+        schema:
+          type: string
+        required: true
+      - name: thread
+        in: query
+        schema:
+          type: string
+        required: false
       requestBody:
         description: New Message Content
         required: true
@@ -114,6 +114,10 @@ components:
       properties:
         content:
           type: string
+        from:
+          type: string
+        to:
+          type: string
 
     Message:
       type: object
@@ -126,7 +130,7 @@ components:
           type: string
         to:
           type: string
-        sent-at:
+        sent:
           type: string
         thread:
           type: array
