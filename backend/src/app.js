@@ -19,8 +19,7 @@ const apiSpec = path.join(__dirname, '../api/openapi.yaml');
 const apidoc = yaml.load(fs.readFileSync(apiSpec, 'utf8'));
 app.use('/v0/api-docs', swaggerUi.serve, swaggerUi.setup(apidoc));
 
-// removed login for now
-// app.post('/login', auth.login);
+app.post('/login', auth.login);
 
 app.use(
     OpenApiValidator.middleware({
