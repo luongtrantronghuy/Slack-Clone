@@ -4,19 +4,24 @@
  *
  * Close on backdrop click:
  * https://github.com/mui-org/material-ui/issues/4341
+ *
+ * Switch case on a string:
+ * https://stackoverflow.com/questions/14910760/switch-case-as-string
  */
 import React from 'react';
-import Home from './Home.js';
+import Home from './ViewHome.js';
 import TopBar from './TopBar.js';
 import WorkspaceList from './WorkspaceList.js';
 import {createTheme, makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
+import BottomNavigation from '@material-ui/core/BottomNavigation';
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 // import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 // import Fab from '@material-ui/core/Fab';
-import IconButton from '@material-ui/core/IconButton';
+// import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 // import ListItem from '@material-ui/core/ListItem';
 // import ListItemText from '@material-ui/core/ListItemText';
@@ -29,6 +34,7 @@ import HomeIcon from '@material-ui/icons/Home';
 // import {Menu as MenuIcon} from '@material-ui/icons';
 import MessageIcon from '@material-ui/icons/Message';
 import SearchIcon from '@material-ui/icons/Search';
+import Messages from './ViewMessages.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -38,7 +44,8 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer+ 1000,
   },
   bottomBar: {
-    top: 'auto',
+    position: 'fixed',
+    width: '100%',
     bottom: 0,
   },
   bottomIcon: {
@@ -77,10 +84,14 @@ function App() {
   const classes = useStyles();
 
   const [dropdownOpen, setDropdown] = React.useState(false);
-  const [viewport, setViewport] = React.useState('Home');
+  const [viewport, setViewport] = React.useState('HOME');
 
   const toggleDropdown = () => {
     setDropdown(!dropdownOpen);
+  };
+
+  const handleViewport = (page) => {
+    setViewport(page);
   };
 
   return (
@@ -90,7 +101,7 @@ function App() {
         <AppBar position="fixed" className={classes.appBar}>
           <Toolbar>
             <TopBar ddOpen={dropdownOpen} toggleDd={toggleDropdown}
-              viewport={viewport}/>
+              viewport={viewport} setViewport={setViewport}/>
           </Toolbar>
         </AppBar>
         <Drawer anchor={'top'} open={dropdownOpen} className={classes.drawer}
@@ -104,28 +115,30 @@ function App() {
         </Drawer>
         <main className={classes.main}>
           <Toolbar />
-          {viewport === 'Home' && <Home setViewport={setViewport}/>}
+          {
+            viewport === 'HOME' ?
+              <Home handleViewport={handleViewport}/> :
+              viewport.substring(0, 3) === 'MSG' ?
+
+                <Messages workspace={viewport.substring(4)} /> :
+                <div />
+          }
         </main>
-        <AppBar position="absolute" color="inherit"
-          className={classes.bottomBar}>
-          <Toolbar>
-            <IconButton className={classes.bottomIcon} size='medium'>
-              <HomeIcon fontSize='large' />
-            </IconButton>
-            <IconButton className={classes.bottomIcon} size='medium'>
-              <MessageIcon fontSize='large' />
-            </IconButton>
-            <IconButton className={classes.bottomIcon} size='medium'>
-              <AlternateEmailIcon fontSize='large' />
-            </IconButton>
-            <IconButton className={classes.bottomIcon} size='medium'>
-              <SearchIcon fontSize='large' />
-            </IconButton>
-            <IconButton className={classes.bottomIcon} size='medium'>
-              <AccountCircleIcon fontSize='large' />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
+        <BottomNavigation value={viewport} className={classes.bottomBar}
+          onChange={(event, newValue) => {
+            handleViewport(newValue);
+          }}>
+          <BottomNavigationAction value='HOME'
+            icon={<HomeIcon fontSize='large' />} />
+          <BottomNavigationAction value='HOME'
+            icon={<MessageIcon fontSize='large' />} />
+          <BottomNavigationAction value='HOME'
+            icon={<AlternateEmailIcon fontSize='large' />} />
+          <BottomNavigationAction value='HOME'
+            icon={<SearchIcon fontSize='large' />} />
+          <BottomNavigationAction value='HOME'
+            icon={<AccountCircleIcon fontSize='large' />} />
+        </BottomNavigation>
       </ThemeProvider>
     </div>
   );

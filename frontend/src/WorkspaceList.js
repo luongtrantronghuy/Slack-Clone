@@ -21,7 +21,6 @@ function WorkspaceList(props) {
   return (
     <React.Fragment>
       <ListItem button className={classes.button}>
-        <ListItem
         <ListItemText primary={'Workspace 1'} />
       </ListItem>
       <ListItem button className={classes.button}>

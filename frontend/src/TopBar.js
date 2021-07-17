@@ -27,10 +27,13 @@ const butUp = Object.assign(
   {}, but, {transform: 'rotate(180deg)'},
 );
 
-const renderBackButton = (viewing) => {
-  if (viewing !== 'Home') {
+const renderBackButton = (viewing, setViewport) => {
+  if (viewing.substring(0, 3) === 'MSG') { // message thread ret to HOME
     return (
-      <Fab color='inherit' style={butBack}>
+      <Fab color='inherit' style={butBack}
+        onClick={() => {
+          setViewport('HOME');
+        }}>
         <ExpandMoreIcon color='primary' fontSize='small'/>
       </Fab>
     );
@@ -38,7 +41,7 @@ const renderBackButton = (viewing) => {
 };
 
 const renderDropdown = (viewing, cond, onClick) => {
-  if (viewing === 'Home') {
+  if (viewing === 'HOME') {
     return (
       <Fab color='inherit' onClick={onClick} style={(cond) ? butUp : but}>
         <ExpandMoreIcon color='primary' fontSize='small'/>
@@ -58,7 +61,7 @@ function TopBar(props) {
 
   return (
     <React.Fragment>
-      {renderBackButton(props.viewport)}
+      {renderBackButton(props.viewport, props.setViewport)}
       <Typography variant="h6" className={classes.title}>
         {currentWorkspace}
       </Typography>
