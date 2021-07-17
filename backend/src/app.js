@@ -31,8 +31,8 @@ app.use(
 );
 
 // Your routes go here
-// app.get('/v0/channels', auth.check, channels.getAll);
-app.get('/v0/channels', channels.getAll);
+app.get('/v0/channels', auth.check, channels.getAll);
+app.post('/v0/channels/:channel:thread', auth.check, channels.sendMessage);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({

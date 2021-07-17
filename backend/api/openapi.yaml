@@ -44,6 +44,45 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /channels/{channel}:
+    post:
+      description: Send New Message
+      parameters:
+        - in: path
+          name: channel
+          schema:
+            type: string
+          required: true
+          description: Name of channel
+        - in: query
+          name: thread
+          schema:
+            type: string
+          required: false
+      requestBody:
+        description: New Message Content
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessage'
+      responses:
+        201:
+          description: EMail Response
+        400:
+          description: Mailbox not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 components:
   schemas:
     Error:
@@ -70,6 +109,12 @@ components:
           items:
             $ref: '#/components/schemas/Message'
 
+    NewMessage:
+      type: object
+      properties:
+        content:
+          type: string
+
     Message:
       type: object
       properties:
@@ -86,11 +131,11 @@ components:
         thread:
           type: array
 
-#   securitySchemes:
-#     bearerAuth:            # arbitrary name for the security scheme
-#       type: http
-#       scheme: bearer
-#       bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
 
-# security:
-#   - bearerAuth: []         # use the same name as above
+security:
+  - bearerAuth: []         # use the same name as above

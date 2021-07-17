@@ -40,9 +40,9 @@ exports.selectAllChannels = async (channel) => {
   return channels;
 };
 
-exports.checkUser = async (username, password) => {
+exports.find = async (username) => {
   let select = `SELECT user-name, password FROM users
-    WHERE user-name = ${username} AND password = ${password}`;
+    WHERE user-name = ${username}`;
   const query = {
     text: select,
   };
