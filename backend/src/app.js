@@ -6,7 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const OpenApiValidator = require('express-openapi-validator');
 
-const dummy = require('./dummy');
+const auth = require('./auth');
+const channels = require('./channels');
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,8 @@ const apiSpec = path.join(__dirname, '../api/openapi.yaml');
 const apidoc = yaml.load(fs.readFileSync(apiSpec, 'utf8'));
 app.use('/v0/api-docs', swaggerUi.serve, swaggerUi.setup(apidoc));
 
+app.post('/authenticate', auth.authenticate);
+
 app.use(
     OpenApiValidator.middleware({
       apiSpec: apiSpec,
@@ -26,8 +29,9 @@ app.use(
     }),
 );
 
-app.get('/v0/dummy', dummy.get);
 // Your routes go here
+app.get('/v0/channels', auth.check, channels.getAll);
+app.post('/v0/channels/:channel:thread', auth.check, channels.sendMessage);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({

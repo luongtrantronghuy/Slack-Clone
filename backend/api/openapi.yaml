@@ -14,22 +14,74 @@ servers:
   - url: http://localhost:3010/v0
 
 paths:
-  /dummy:
+  /channels:
     get:
-      description: Dummy Endpoint
+      description: Get messages from channel
+      parameters:
+        - in: query
+          name: channel
+          schema:
+            type: string
+          required: false
+          description: Name of channel
       responses:
         200:
           description: Succesful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DummyResponse'
+                $ref: '#/components/schemas/AllChannels'
+        404:
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         default:
           description: unexpected error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /channels/{channel}:
+    post:
+      description: Send New Message
+      parameters:
+      - name: channel
+        in: path
+        description: Name of channel
+        schema:
+          type: string
+        required: true
+      - name: thread
+        in: query
+        schema:
+          type: string
+        required: false
+      requestBody:
+        description: New Message Content
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessage'
+      responses:
+        201:
+          description: EMail Response
+        400:
+          description: Mailbox not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 
 components:
   schemas:
@@ -44,9 +96,50 @@ components:
         message:
           type: string
 
-    DummyResponse:
-      required:
-        - message
+    AllChannels:
+      type: array
+      items:
+        $ref: '#/components/schemas/ChannelResponse'
+
+    ChannelResponse:
+      type: object
       properties:
         message:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+
+    NewMessage:
+      type: object
+      properties:
+        content:
           type: string
+        from:
+          type: string
+        to:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        from:
+          type: string
+        to:
+          type: string
+        sent:
+          type: string
+        thread:
+          type: array
+
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+
+security:
+  - bearerAuth: []         # use the same name as above
