@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
  */
 function Home(props) {
   const classes = useStyles();
-  const handleViewport = props.handleViewport;
   const [channelsOpen, setChannels] = React.useState(true);
   const [dmsOpen, setDms] = React.useState(true);
 
@@ -60,7 +59,7 @@ function Home(props) {
       </ListItem>
       <Collapse in={channelsOpen}>
         <List>
-          <Channels nested={classes.nested} handleViewport={handleViewport} />
+          <Channels nested={classes.nested} />
           <ListItem button className={classes.nested}>
             <ListItemIcon><AddBoxIcon /></ListItemIcon>
             <ListItemText primary='Add new channel' />

@@ -9,6 +9,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const fetchWorkspaces = async (setWorkspaces, setError) => {
+  setWorkspaces([{name: 'cse183'}, {name: 'workspace2'}]);
+  // const item = localStorage.getItem('user');
+  // if (!item) {
+  //   return;
+  // }
+  // const user = JSON.parse(item);
+  // const bearerToken = user ? user.accessToken : '';
+  // fetch('/v0/channels', {
+  //   method: 'GET',
+  //   headers: new Headers({
+  //     'Authorization': `Bearer ${bearerToken}`,
+  //     'Content-Type': 'application/x-www-form-urlencoded',
+  //   }),
+  // })
+  //   .then((response) => {
+  //     if (!response.ok) {
+  //       throw response;
+  //     }
+  //     return response.json();
+  //   })
+  //   .then((json) => {
+  //     setError('');
+  //     setWorkspaces(json);
+  //   })
+  //   .catch((error) => {
+  //     console.log(error);
+  //     setWorkspaces([]);
+  //     setError(`${error.status} - ${error.statusText}`);
+  //   });
+};
+
 /**
  * Gets all the workspaces and creates a list of items to return for viewing
  * in app
@@ -17,21 +49,21 @@ const useStyles = makeStyles((theme) => ({
  */
 function WorkspaceList(props) {
   const classes = useStyles();
+  const [workspaces, setWorkspaces] = React.useState([]);
+  const [error, setError] = React.useState([]);
+
+  React.useEffect(() => {
+    fetchWorkspaces(setWorkspaces, setError);
+  }, []);
 
   return (
     <React.Fragment>
-      <ListItem button className={classes.button}>
-        <ListItemText primary={'Workspace 1'} />
-      </ListItem>
-      <ListItem button className={classes.button}>
-        <ListItemText primary={'Workspace 2'} />
-      </ListItem>
-      <ListItem button className={classes.button}>
-        <ListItemText primary={'Workspace 3'} />
-      </ListItem>
-      <ListItem button className={classes.button}>
-        <ListItemText primary={'Workspace 4'} />
-      </ListItem>
+      {workspaces.map((wrkspc) => (
+        <ListItem button className={classes.button}>
+          <ListItemText primary={wrkspc.name} />
+        </ListItem>
+      ))}
+      <ListItem>{error}</ListItem>
     </React.Fragment>
   );
 }

@@ -5,15 +5,36 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListIcon from '@material-ui/icons/List';
 
-// const getChannels = async () => {
-//   try {
-//     const reponses = await fetch('http://localhost:3010/v0/channels', {
-
-//     });
-//   } catch(err) {
-//     console.error(err);
-//   }
-// };
+const fetchChannels = (setChannels, setError) => {
+  const item = localStorage.getItem('user');
+  if (!item) {
+    return;
+  }
+  const user = JSON.parse(item);
+  const bearerToken = user ? user.accessToken : '';
+  fetch('/v0/channels', {
+    method: 'GET',
+    headers: new Headers({
+      'Authorization': `Bearer ${bearerToken}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    })
+    .then((json) => {
+      setError('');
+      setChannels(json);
+    })
+    .catch((error) => {
+      console.log(error);
+      setChannels([]);
+      setError(`${error.status} - ${error.statusText}`);
+    });
+};
 
 /**
  * Returns the componnents that are the channels within
@@ -22,13 +43,12 @@ import ListIcon from '@material-ui/icons/List';
  * @return {object} JSX
  */
 function Channels(props) {
-  const channels = [ // for testing, in real, grab channels from curr workspace
-    {id: 1, name: 'general', messages: []},
-    {id: 2, name: 'questions', messages: []},
-    {id: 3, name: 'discussions', messages: []},
-    {id: 4, name: 'memes', messages: []},
-    {id: 5, name: 'serious', messages: []},
-  ];
+  const [channels, setChannels] = React.useState([]);
+  const [error, setError] = React.useState([]);
+
+  React.useEffect(() => {
+    fetchChannels(setChannels, setError);
+  }, []);
 
   return (
     <React.Fragment>
@@ -43,6 +63,7 @@ function Channels(props) {
           <ListItemText primary={channel.name} />
         </ListItem>
       ))}
+      <ListItem>{error}</ListItem>
     </React.Fragment>
   );
 }
