@@ -62,7 +62,7 @@ exports.selectAllChannels = async (channel) => {
 };
 
 exports.find = async (username) => {
-  const select = `SELECT username, info FROM users
+  const select = `SELECT username, info, access FROM users
     WHERE username = '${username}'`;
   const query = {
     text: select,
@@ -120,6 +120,19 @@ exports.sendNewMessage = async (body, channel, thread) => {
     const {rows} = await pool.query(query1);
     rows[0].thread = rows[0].thread.map((x) => JSON.parse(x));
     return rows;
+  } else {
+    return undefined;
+  }
+};
+
+exports.selectUser = async (username) => {
+  const select = `SELECT username, info, access FROM users WHERE username = '${username}'`
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows) {
+    return {username: rows[0].username, name: rows[0].info.name, access: rows[0].access};
   } else {
     return undefined;
   }
