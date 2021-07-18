@@ -119,8 +119,8 @@ paths:
     get:
       description: get array of channels
       parameters:
-        - name: code
-          in: query
+        - in: query
+          name: code
           description: code of workspace
           schema:
             type: string

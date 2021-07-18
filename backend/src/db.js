@@ -139,3 +139,16 @@ exports.selectUser = async (username) => {
     return undefined;
   }
 };
+
+exports.getWorkspaces = async (code) => {
+  const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows.length > 0) {
+    return {name: rows[0].title, channels: rows[0].channels};
+  } else {
+    return undefined;
+  }
+}
