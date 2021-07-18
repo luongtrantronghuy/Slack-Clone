@@ -31,13 +31,8 @@ app.use(
 );
 
 // Your routes go here
-// app.get('/v0/channels', auth.check, channels.getAll);
-// app.post('/v0/channels/:channel:thread', auth.check, channels.sendMessage);
-
-// These are for testing backend ONLY (no auth.check)
-// not until we get the login working on front end
-app.get('/v0/channels', channels.getAll);
-app.post('/v0/channels/:channel:thread', channels.sendMessage);
+app.get('/v0/channels', auth.check, channels.getAll);
+app.post('/v0/channels/:channel:thread', auth.check, channels.sendMessage);
 app.get('/v0/user', auth.check, user.getUser);
 
 app.use((err, req, res, next) => {
