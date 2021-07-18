@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-var bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
 
 const secrets = require('../data/secrets');
 const db = require('./db');
@@ -10,16 +10,15 @@ exports.authenticate = async (req, res) => {
   let check = false;
   if (user) {
     check = (user.username === username) &&
-      (bcrypt.compareSync(password, user.password));
+      (bcrypt.compareSync(password, user.info.password));
   }
   if (check) {
     const accessToken = jwt.sign(
-      {username: user.username, role: user.role},
-      secrets.accessToken, {
-        expiresIn: '30m',
-        algorithm: 'HS256'
-      });
-    console.log({name: user.name, accessToken: accessToken});
+        {username: user.username, role: user.role},
+        secrets.accessToken, {
+          expiresIn: '30m',
+          algorithm: 'HS256',
+        });
     res.status(200).json({name: user.name, accessToken: accessToken});
   } else {
     res.status(401).send('Username or password incorrect');

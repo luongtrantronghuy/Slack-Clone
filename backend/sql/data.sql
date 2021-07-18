@@ -11,17 +11,24 @@
 -- }
 
 DELETE FROM channels;
-INSERT INTO channels(channel, messages, thread) VALUES ('assignment-1','{"content": "First message in the asgn1 channel!","from": "Molly Member","to": "","sent": "2020-11-17T23:17:19Z"}', ARRAY ['{"content": "First message in all threads!","from": "Anna Admin","to": "","sent-at": "2020-11-17T23:17:19Z"}', '{"content": "Second message in the thread!","from": "Anna Admin","to": "","sent-at": "2021-1-17T23:17:19Z"}']);
-INSERT INTO channels(channel, messages, thread) VALUES ('assignment-1','{"content": "Second message in the asgn1 channel!","from": "Anna Admin","to": "","sent": "2021-1-17T23:17:19Z"}', ARRAY ['{"content": "This message can have threads too!","from": "Anna Admin","to": "","sent-at": "2021-1-17T23:17:19Z"}', '{"content": "Yes","from": "Molly Member","to": "","sent-at": "2021-1-17T23:17:19Z"}']);
-INSERT INTO channels(channel, messages, thread) VALUES ('assignment-2','{"content": "First message in the asgn2 channel!","from": "Anna Admin","to": "","sent": "2020-10-17T23:17:19Z"}', ARRAY ['{"content": "Thread in assignment-2!","from": "Molly Member","to": "","sent-at": "2020-10-17T23:17:19Z"}']);
-INSERT INTO channels(channel, messages, thread) VALUES ('dm','{"content": "Hi Molly Member, this is Anna Admin!","from": "Anna Admin","to": "Molly Member","sent": "2020-10-17T23:17:19Z"}', ARRAY ['{"content": "hey from thread!","from": "Molly Member","to": "Anna Admin","sent-at": "2020-11-17T23:17:19Z"}']);
+INSERT INTO channels(channel, messages, thread) VALUES ('assignment-1','{"content": "First message in the asgn1 channel!","from": "molly","to": "","sent": "2020-11-17T23:17:19Z"}', ARRAY ['{"content": "First message in all threads!","from": "anna","to": "","sent-at": "2020-11-17T23:17:19Z"}', '{"content": "Second message in the thread!","from": "anna","to": "","sent-at": "2021-1-17T23:17:19Z"}']);
+INSERT INTO channels(channel, messages, thread) VALUES ('assignment-1','{"content": "Second message in the asgn1 channel!","from": "anna","to": "","sent": "2021-1-17T23:17:19Z"}', ARRAY ['{"content": "This message can have threads too!","from": "anna","to": "","sent-at": "2021-1-17T23:17:19Z"}', '{"content": "Yes","from": "molly","to": "","sent-at": "2021-1-17T23:17:19Z"}']);
+INSERT INTO channels(channel, messages, thread) VALUES ('assignment-2','{"content": "First message in the asgn2 channel!","from": "anna","to": "","sent": "2020-10-17T23:17:19Z"}', ARRAY ['{"content": "Thread in assignment-2!","from": "molly","to": "","sent-at": "2020-10-17T23:17:19Z"}']);
+INSERT INTO channels(channel, messages, thread) VALUES ('dm','{"content": "Hi Molly Member, this is Anna Admin!","from": "anna","to": "molly","sent": "2020-10-17T23:17:19Z"}', ARRAY ['{"content": "hey from thread!","from": "molly","to": "anna","sent-at": "2020-11-17T23:17:19Z"}']);
+INSERT INTO channels(channel, messages, thread) VALUES ('different-channel','{"content": "Different Channel","from": "anna","to": "molly","sent": "2020-10-17T23:17:19Z"}', ARRAY ['']);
 
 -- User Table --
+-- info:
 -- {
 --   "name": "string"
 --   "username": "string"
 --   "password": "string"
 -- }
 DELETE FROM users;
-INSERT INTO users(info) VALUES ('{"name": "Molly Member", "username": "Molly Member123", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}');
-INSERT INTO users(info) VALUES ('{"name": "Anna Admin", "username": "anna", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.G1ohpR3oQbbBHK4KzX7dU219Pv/lzze"}');
+INSERT INTO users(username, info, access) VALUES ('molly', '{"name": "Molly Member", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}', ARRAY ['cse183']);
+INSERT INTO users(username, info, access) VALUES ('anna', '{"name": "Anna Admin", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.G1ohpR3oQbbBHK4KzX7dU219Pv/lzze"}', ARRAY ['cse183', 'workspace2']);
+INSERT INTO users(username, info, access) VALUES ('dude', '{"name": "Big Boi", "password": "test"}', ARRAY ['cse183', 'workspace2']);
+
+DELETE FROM workspaces;
+INSERT INTO workspaces(code, title, channels) VALUES ('cse183', 'CSE 183', ARRAY ['assignment-1', 'assignment-2']);
+INSERT INTO workspaces(code, title, channels) VALUES ('workspace2', 'A different workspace', ARRAY ['different-channel']);

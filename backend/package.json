@@ -4,6 +4,7 @@
   "description": "CSE183 Assignment 8 - Backend",
   "author": "David Harrison <dcharris@ucsc.edu>",
   "license": "UNLICENSED",
+  "proxy": "http://localhost:3000",
   "repository": "none",
   "devDependencies": {
     "eslint": "^7.30.0",
