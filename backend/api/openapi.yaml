@@ -115,6 +115,35 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /workspaces:
+    get:
+      description: get array of channels
+      parameters:
+        - name: code
+          in: query
+          description: code of workspace
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        404:
+          description: Workspace not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
 components:
@@ -192,6 +221,17 @@ components:
           type: string
         access:
           type: array
+
+    WorkspaceResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        channels:
+          type: array
+
+
+
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
