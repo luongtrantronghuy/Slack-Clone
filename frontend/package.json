@@ -4,6 +4,7 @@
   "description": "CSE183 Assignment 8 - Frontend",
   "author": "David Harrison <dcharris@ucsc.edu>",
   "license": "UNLICENSED",
+  "proxy": "http://localhost:3010",
   "repository": "none",
   "dependencies": {
     "@material-ui/core": "^4.11.4",
@@ -11,7 +12,8 @@
     "emoji-picker-react": "^3.4.8",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",

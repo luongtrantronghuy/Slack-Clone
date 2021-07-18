@@ -1,4 +1,5 @@
 import React from 'react';
+// import {useParams} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -34,15 +35,14 @@ const useStyles = makeStyles((theme) => ({
  */
 function Messages(props) {
   const classes = useStyles();
-  // const workspace = props.workspace;
-
-  // const workspaces = {
-  //   //['general', 'homework', 'other']
-  //   general: {
-  //     date: 'jan23',
-  //     content: 'yo what up?',
-  //   },
-  // };
+  // const {id} = useParams(); // id of channel we're in
+  // const channels = [ // for testing, in real, grab channels from curr ws
+  //   {id: 1, name: 'general', messages: []},
+  //   {id: 2, name: 'questions', messages: []},
+  //   {id: 3, name: 'discussions', messages: []},
+  //   {id: 4, name: 'memes', messages: []},
+  //   {id: 5, name: 'serious', messages: []},
+  // ];
 
   return (
     <div className={classes.paper}>

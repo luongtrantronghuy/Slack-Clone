@@ -1,4 +1,5 @@
 import React from 'react';
+import {useLocation, useHistory} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
@@ -19,36 +20,15 @@ const but = {
   minHeight: '25px',
 };
 
+// buttonBackwards
 const butBack = Object.assign(
   {}, but, {transform: 'rotate(90deg)'},
 );
 
+// buttonUpwards
 const butUp = Object.assign(
   {}, but, {transform: 'rotate(180deg)'},
 );
-
-const renderBackButton = (viewing, setViewport) => {
-  if (viewing.substring(0, 3) === 'MSG') { // message thread ret to HOME
-    return (
-      <Fab color='inherit' style={butBack}
-        onClick={() => {
-          setViewport('HOME');
-        }}>
-        <ExpandMoreIcon color='primary' fontSize='small'/>
-      </Fab>
-    );
-  }
-};
-
-const renderDropdown = (viewing, cond, onClick) => {
-  if (viewing === 'HOME') {
-    return (
-      <Fab color='inherit' onClick={onClick} style={(cond) ? butUp : but}>
-        <ExpandMoreIcon color='primary' fontSize='small'/>
-      </Fab>
-    );
-  }
-};
 
 /**
  * Returns elements to be found on top appbar
@@ -58,14 +38,30 @@ const renderDropdown = (viewing, cond, onClick) => {
 function TopBar(props) {
   const classes = useStyles();
   const currentWorkspace = 'Workspace 1'; // query where we're at
+  const location = useLocation();
+  const history = useHistory();
 
   return (
     <React.Fragment>
-      {renderBackButton(props.viewport, props.setViewport)}
+      { // back button
+        location.pathname !== '/' &&
+        <Fab color='inherit' style={butBack} onClick={() => history.goBack()}>
+          <ExpandMoreIcon color='primary' fontSize='small'/>
+        </Fab>
+      }
       <Typography variant="h6" className={classes.title}>
         {currentWorkspace}
       </Typography>
-      {renderDropdown(props.viewport, props.ddOpen, props.toggleDd)}
+      { // workspace chooser
+        location.pathname === '/' &&
+        <Fab
+          color='inherit'
+          style={(props.ddOpen) ? butUp : but}
+          onClick={props.toggleDd}
+        >
+          <ExpandMoreIcon color='primary' fontSize='small'/>
+        </Fab>
+      }
     </React.Fragment>
   );
 }
