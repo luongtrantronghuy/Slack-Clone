@@ -4,6 +4,7 @@
   "description": "CSE183 Assignment 8 - Frontend",
   "author": "David Harrison <dcharris@ucsc.edu>",
   "license": "UNLICENSED",
+  "proxy": "http://localhost:3010",
   "repository": "none",
   "proxy": "http://localhost:3010",
   "dependencies": {
