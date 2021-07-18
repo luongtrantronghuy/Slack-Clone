@@ -14,12 +14,12 @@ exports.authenticate = async (req, res) => {
   }
   if (check) {
     const accessToken = jwt.sign(
-        {username: user.username, role: user.role},
+        {username: user.username, access: user.access},
         secrets.accessToken, {
           expiresIn: '30m',
           algorithm: 'HS256',
         });
-    res.status(200).json({name: user.name, accessToken: accessToken});
+    res.status(200).json({accessToken: accessToken, access: user.access});
   } else {
     res.status(401).send('Username or password incorrect');
   }
@@ -34,6 +34,7 @@ exports.check = (req, res, next) => {
         return res.sendStatus(403);
       }
       req.user = user;
+      console.log(user);
       next();
     });
   } else {

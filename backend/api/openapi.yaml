@@ -85,6 +85,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /user:
+    get:
+      description: get info of user
+      parameters:
+        - name: username
+          in: query
+          description: username of user
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Succesful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        404:
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 
 
 components:
@@ -152,6 +182,16 @@ components:
           type: string
         sent:
           type: string
+
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        name:
+          type: string
+        access:
+          type: array
 
   securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
