@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "CSE183 Assignment 8",
   "author": "David Harrison <dcharris@ucsc.edu>",
+  "proxy": "http://localhost:3010",
   "license": "UNLICENSED",
   "repository": "none",
   "devDependencies": {
@@ -13,5 +14,8 @@
     "frontend": "cd frontend && npm start",
     "start": "(npm run backend) & (npm run frontend)",
     "zip": "bestzip Assignment8.Submission.zip frontend/src/* backend/sql/* backend/src/* backend/api/*"
+  },
+  "dependencies": {
+    "react-router-dom": "^5.2.0"
   }
 }
