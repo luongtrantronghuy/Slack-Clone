@@ -2,10 +2,10 @@ import React from 'react';
 import {useHistory} from 'react-router-dom';
 
 /**
- *
- * @return {object}
+ * @param {object} props
+ * @return {object} JSX
  */
-function Login() {
+function Login(props) {
   const [user, setUser] = React.useState({username: '', password: ''});
   const history = useHistory();
 
@@ -18,7 +18,14 @@ function Login() {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    fetch('/authenticate', {
+    // const request = new Request({
+    //   method: 'POST',
+    //   body: JSON.stringify(user),
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+    fetch('authenticate', {
       method: 'POST',
       body: JSON.stringify(user),
       headers: {
@@ -33,6 +40,7 @@ function Login() {
       })
       .then((json) => {
         localStorage.setItem('user', JSON.stringify(json));
+        props.setLogin(true);
         history.push('/');
       })
       .catch((err) => {
