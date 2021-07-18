@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "CSE183 Assignment 8",
   "author": "David Harrison <dcharris@ucsc.edu>",
-  "proxy": "http://localhost:3010",
   "license": "UNLICENSED",
   "repository": "none",
   "devDependencies": {

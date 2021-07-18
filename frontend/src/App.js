@@ -90,6 +90,7 @@ function App() {
   const classes = useStyles();
   // const history = useHistory();
 
+  const [loggedIn, setLogin] = React.useState(false);
   const [dropdownOpen, setDropdown] = React.useState(false);
   const [viewport, setViewport] = React.useState('HOME');
 
@@ -110,7 +111,7 @@ function App() {
       <Router>
         <CssBaseline />
         <ThemeProvider theme={theme}>
-          {localStorage.getItem('user') === undefined ?
+          {loggedIn ?
             (
               <React.Fragment>
                 <AppBar position="fixed" className={classes.appBar}>
@@ -174,7 +175,7 @@ function App() {
                 </BottomNavigation>
               </React.Fragment>
             ) :
-            <Login />
+            <Login setLogin={setLogin} />
           }
         </ThemeProvider>
       </Router>
