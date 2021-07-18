@@ -1,11 +1,4 @@
 /**
- * Testing branching -chllamas
- */
-import React from 'react';
-
-import Emoji from './Emoji';
-
-/**
  * Forcing icons to be smaller than small:
  * https://stackoverflow.com/questions/37480517/floating-action-button-is-there-a-straightforward-way-to-make-a-button-smaller
  *
