@@ -39,9 +39,11 @@ exports.selectAllChannels = async (channel) => {
   };
   const {rows} = await pool.query(query);
   const channels = [];
-
   for (row of rows) {
-    row.thread = row.thread.map((msg) => JSON.parse(msg));
+    console.log(rows);
+    if (row.thread[0] != '') { // if thread is empty, ignore
+      row.thread = row.thread.map((msg) => JSON.parse(msg));
+    }
     row.messages = {id: row.id, ...row.messages, thread: row.thread};
     if (channels.length == 0) {
       channels.push({name: row.channel, messages: [row.messages]});
@@ -137,3 +139,16 @@ exports.selectUser = async (username) => {
     return undefined;
   }
 };
+
+exports.getWorkspaces = async (code) => {
+  const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows.length > 0) {
+    return {name: rows[0].title, channels: rows[0].channels};
+  } else {
+    return undefined;
+  }
+}
