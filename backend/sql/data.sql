@@ -31,3 +31,8 @@ INSERT INTO users(username, info, access) VALUES ('anna', '{"name": "Anna Admin"
 DELETE FROM workspaces;
 INSERT INTO workspaces(code, title, channels) VALUES ('cse183', 'CSE 183', ARRAY ['assignment-1', 'assignment-2']);
 INSERT INTO workspaces(code, title, channels) VALUES ('workspace2', 'A different workspace', ARRAY ['different-channel']);
+
+DELETE FROM channelAccess;
+INSERT INTO channelAccess(title, users) VALUES ('assignment-1', ARRAY ['molly', 'anna']);
+INSERT INTO channelAccess(title, users) VALUES ('assignment-2', ARRAY ['anna']);
+INSERT INTO channelAccess(title, users) VALUES ('different-channel', ARRAY ['anna']);

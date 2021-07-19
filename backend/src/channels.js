@@ -9,7 +9,13 @@ const db = require('./db');
  */
 exports.getAll = async (req, res) => {
   const workspaces = await db.getWorkspaces(req.user.access);
-  const channels = await db.selectAllChannels(req.query.channel, workspaces[0].channels);
+  // workspaces[0] is temporary solution
+  // should be the current workspace
+  const channelList = await db.verifyChannels(workspaces[0].channels, req.user.username);
+  if (!channelList) {
+    res.status(404).send();
+  }
+  const channels = await db.selectAllChannels(req.query.channel, channelList);
   if (channels.length == 0) {
     res.status(404).send();
   } else {

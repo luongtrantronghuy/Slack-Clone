@@ -184,3 +184,32 @@ exports.getWorkspaces = async (access, code) => {
     return undefined;
   }
 }
+
+exports.verifyChannels = async (channelList, username) => {
+  const verifiedList = [];
+  if(channelList.length > 0) {
+    for (channel of channelList) {
+      const select = `SELECT users FROM channelAccess WHERE title = '${channel}'`
+      const query = {
+        text: select
+      };
+      const {rows} = await pool.query(query);
+      if (rows) {
+        const users = rows[0].users;
+        for (user of users) {
+          if (username === user) {
+            verifiedList.push(channel);
+            break;
+          }
+        }
+      }
+    }
+    if (verifiedList.length > 0) {
+      return verifiedList;
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
+  }
+};
