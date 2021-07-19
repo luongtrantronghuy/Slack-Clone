@@ -37,9 +37,19 @@ const butUp = Object.assign(
  */
 function TopBar(props) {
   const classes = useStyles();
-  const currentWorkspace = 'Workspace 1'; // query where we're at
   const location = useLocation();
   const history = useHistory();
+
+  // grab channel name if we're in one
+  let directory = 'Workspace 1'; // defaults to current workspace
+  if (location.pathname !== '/') {
+    const pathArray = location.pathname.split('/');
+    if (pathArray[1] === 'messages') {
+      directory = pathArray[2];
+    } else if (pathArray[1] === 'account') {
+      directory = '';
+    }
+  }
 
   return (
     <React.Fragment>
@@ -50,7 +60,7 @@ function TopBar(props) {
         </Fab>
       }
       <Typography variant="h6" className={classes.title}>
-        {currentWorkspace}
+        {directory}
       </Typography>
       { // workspace chooser
         location.pathname === '/' &&

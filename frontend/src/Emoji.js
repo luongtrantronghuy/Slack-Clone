@@ -14,12 +14,12 @@ function Emoji() {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Picker onEmojiClick={onEmojiClick} />
       <div>
         <h2>{emoji ? emoji.emoji : ''}</h2>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 
