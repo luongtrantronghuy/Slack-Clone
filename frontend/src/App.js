@@ -16,6 +16,7 @@
  */
 import React from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import Account from './ViewAccount.js';
 import BottomBar from './BottomBar.js';
 import Home from './ViewHome.js';
 import Login from './Login.js';
@@ -68,7 +69,10 @@ const theme = createTheme({
  */
 function App() {
   const classes = useStyles();
-  const [loggedIn, setLogin] = React.useState(false);
+  const [username, setUsername] = React.useState(null);
+  const [loggedIn, setLogin] = React.useState(
+    localStorage.getItem('user') !== null,
+  );
   const [dropdownOpen, setDropdown] = React.useState(false);
 
   const toggleDropdown = () => {
@@ -110,11 +114,11 @@ function App() {
                     <Route exact path='/'>
                       <Home />
                     </Route>
-                    <Route path='/messages/:id'>
+                    <Route path='/messages/:name'>
                       <Messages />
                     </Route>
-                    <Route path='/messages'>
-                      <Messages />
+                    <Route path='/account'>
+                      <Account setLogin={setLogin} username={username} />
                     </Route>
                   </Switch>
                   <Toolbar />
@@ -122,7 +126,7 @@ function App() {
                 <BottomBar />
               </React.Fragment>
             ) :
-            <Login setLogin={setLogin} />
+            <Login setLogin={setLogin} setUsername={setUsername} />
           }
         </ThemeProvider>
       </Router>

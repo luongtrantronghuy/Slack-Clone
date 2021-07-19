@@ -45,7 +45,8 @@ function BottomBar(props) {
         icon={<SearchIcon fontSize='large' />}
       />
       <BottomNavigationAction
-        value='HOME'
+        component={Link}
+        to='/account'
         icon={<AccountCircleIcon fontSize='large' />}
       />
     </BottomNavigation>

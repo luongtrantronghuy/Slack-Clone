@@ -13,7 +13,9 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     fontSize: 18,
-    padding: 10,
+    width: '80vw',
+    maxWidth: '350px',
+    padding: '10',
   },
   login: {
     position: 'relative',
@@ -50,13 +52,7 @@ function Login(props) {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    // const request = new Request({
-    //   method: 'POST',
-    //   body: JSON.stringify(user),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
+    props.setUsername(user.username);
     fetch('authenticate', {
       method: 'POST',
       body: JSON.stringify(user),
@@ -83,19 +79,14 @@ function Login(props) {
 
   return (
     <ThemeProvider theme={theme}>
-      <div align='center'
-        className={classes.login}
-      >
+      <div align='center' className={classes.login}>
         <form onSubmit={onSubmit}>
-          <h2 id='welcome'
-            className={classes.title}
-          >Login</h2>
+          <h2 id='welcome' className={classes.title}>Login</h2>
           <table border='0' cellspacing='20'>
             <tr>
               <td colSpan='2'>
                 <input
                   className={classes.input}
-                  size='40'
                   type='username'
                   name='username'
                   placeholder='Username'
@@ -108,7 +99,6 @@ function Login(props) {
               <td colSpan='2'>
                 <input
                   className={classes.input}
-                  size='40'
                   type='password'
                   name='password'
                   placeholder='Password'

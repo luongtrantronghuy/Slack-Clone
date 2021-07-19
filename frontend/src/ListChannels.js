@@ -76,7 +76,7 @@ function ChannelsList(props) {
         <ChannelListItem
           nested={props.nested}
           name={channel.name}
-          link={'/message/'.concat(channel.name)}
+          link={'/messages/'.concat(channel.name)}
         />,
       )}
       <ListItem key={'CHAN-ERR'}>{error}</ListItem>

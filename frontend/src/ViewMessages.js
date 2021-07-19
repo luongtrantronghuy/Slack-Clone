@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
  */
 function Messages(props) {
   const classes = useStyles();
-  // const {id} = useParams(); // id of channel we're in
+  // const {name} = useParams(); // id of channel we're in
   // const channels = [ // for testing, in real, grab channels from curr ws
   //   {id: 1, name: 'general', messages: []},
   //   {id: 2, name: 'questions', messages: []},
