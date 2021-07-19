@@ -29,18 +29,31 @@ function createUUID() {
   * @param {string} channel
   * @return {object}
 */
-exports.selectAllChannels = async (channel) => {
-  let select = 'SELECT id, channel, messages, thread FROM channels';
+exports.selectAllChannels = async (channel, channelsList) => {
+  let rowss = [];
   if (channel) {
-    select += ` WHERE channel = '${channel}'`;
+    let select = `SELECT id, channel, messages, thread FROM channels WHERE channel = '${channel}'`;
+    const query = {
+      text: select,
+    };
+    const {rows} = await pool.query(query);
+    rowss = rows;
+  } else if (channelsList.length > 0) {
+    for (allowedChannel of channelsList) {
+      let select = `SELECT id, channel, messages, thread FROM channels WHERE channel = '${allowedChannel}'`;
+      const query = {
+        text: select,
+      };
+      const {rows} = await pool.query(query);
+      for (row of rows) {
+        rowss.push(row)
+      }
+    }
+  } else {
+    return undefined;
   }
-  const query = {
-    text: select,
-  };
-  const {rows} = await pool.query(query);
   const channels = [];
-  for (row of rows) {
-    console.log(rows);
+  for (row of rowss) {
     if (row.thread[0] != '') { // if thread is empty, ignore
       row.thread = row.thread.map((msg) => JSON.parse(msg));
     }
@@ -140,15 +153,63 @@ exports.selectUser = async (username) => {
   }
 };
 
-exports.getWorkspaces = async (code) => {
-  const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
-  const query = {
-    text: select,
-  };
-  const {rows} = await pool.query(query);
-  if (rows.length > 0) {
-    return {name: rows[0].title, channels: rows[0].channels};
+exports.getWorkspaces = async (access, code) => {
+  const response = [];
+  if (code) {
+    const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
+    const query = {
+      text: select,
+    };
+    const {rows} = await pool.query(query);
+    if (rows.length > 0) {
+      response.push({name: rows[0].title, channels: rows[0].channels})
+    }
+  } else if (access.length > 0) {
+    for (code of access) {
+      const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
+      const query = {
+        text: select,
+      };
+      const {rows} = await pool.query(query);
+      if (rows.length > 0) {
+        response.push({name: rows[0].title, channels: rows[0].channels})
+      }
+    }
+  } else {
+    return undefined;
+  }
+  if (response.length > 0) {
+    return response;
   } else {
     return undefined;
   }
 }
+
+exports.verifyChannels = async (channelList, username) => {
+  const verifiedList = [];
+  if(channelList.length > 0) {
+    for (channel of channelList) {
+      const select = `SELECT users FROM channelAccess WHERE title = '${channel}'`
+      const query = {
+        text: select
+      };
+      const {rows} = await pool.query(query);
+      if (rows) {
+        const users = rows[0].users;
+        for (user of users) {
+          if (username === user) {
+            verifiedList.push(channel);
+            break;
+          }
+        }
+      }
+    }
+    if (verifiedList.length > 0) {
+      return verifiedList;
+    } else {
+      return undefined;
+    }
+  } else {
+    return undefined;
+  }
+};

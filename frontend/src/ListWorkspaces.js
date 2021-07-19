@@ -69,8 +69,6 @@ function WorkspaceList(props) {
     fetchWorkspaces(setWorkspaces, setError);
   }, []);
 
-  console.log(workspaces);
-
   return (
     <React.Fragment>
       {workspaces.map((workspace) => (

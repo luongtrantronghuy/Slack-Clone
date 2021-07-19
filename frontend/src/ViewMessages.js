@@ -44,6 +44,10 @@ function Messages(props) {
   //   {id: 5, name: 'serious', messages: []},
   // ];
 
+  // React.useEffect(() => {
+  //   fetchMessage(setWorkspaces, setError);
+  // }, []);
+
   return (
     <div className={classes.paper}>
       <Toolbar />

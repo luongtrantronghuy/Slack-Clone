@@ -19,11 +19,11 @@ paths:
       description: Get messages from channel
       parameters:
         - in: query
-          name: channel
+          name: workspace
           schema:
             type: string
           required: false
-          description: Name of channel
+          description: Name of workspace
       responses:
         200:
           description: Succesful
@@ -145,7 +145,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-
 components:
   schemas:
     Error:
@@ -223,12 +222,10 @@ components:
           type: array
 
     WorkspaceResponse:
-      type: object
+      type: array
       properties:
-        name:
-          type: string
         channels:
-          type: array
+          type: object
 
 
 
