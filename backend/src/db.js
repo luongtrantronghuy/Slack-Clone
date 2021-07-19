@@ -40,7 +40,6 @@ exports.selectAllChannels = async (channel) => {
   const {rows} = await pool.query(query);
   const channels = [];
   for (row of rows) {
-    console.log(rows);
     if (row.thread[0] != '') { // if thread is empty, ignore
       row.thread = row.thread.map((msg) => JSON.parse(msg));
     }

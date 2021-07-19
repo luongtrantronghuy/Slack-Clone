@@ -19,8 +19,9 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import BottomBar from './BottomBar.js';
 import Home from './ViewHome.js';
 import Login from './Login.js';
+import Messages from './ViewMessages.js';
 import TopBar from './TopBar.js';
-import WorkspaceList from './WorkspaceList.js';
+import WorkspaceList from './ListWorkspaces';
 import {createTheme, makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -28,7 +29,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Toolbar from '@material-ui/core/Toolbar';
-import Messages from './ViewMessages.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {

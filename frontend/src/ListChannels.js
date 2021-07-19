@@ -37,12 +37,32 @@ const fetchChannels = (setChannels, setError) => {
 };
 
 /**
+ * Single button component for dropdown of channels
+ * @param {object} props
+ * @return {object} JSX
+ */
+function ChannelListItem(props) {
+  return (
+    <ListItem
+      button
+      className={props.nested}
+      component={Link}
+      to={props.link}
+      key={'channel/'.concat(props.name)}
+    >
+      <ListItemIcon><ListIcon /></ListItemIcon>
+      <ListItemText primary={props.name} />
+    </ListItem>
+  );
+}
+
+/**
  * Returns the componnents that are the channels within
  * the given workspace
  * @param {object} props
  * @return {object} JSX
  */
-function Channels(props) {
+function ChannelsList(props) {
   const [channels, setChannels] = React.useState([]);
   const [error, setError] = React.useState([]);
 
@@ -52,20 +72,16 @@ function Channels(props) {
 
   return (
     <React.Fragment>
-      {channels.map((channel) => (
-        <ListItem
-          button
-          className={props.nested}
-          component={Link}
-          to={'/messages/'.concat(channel.id.toString(10))}
-        >
-          <ListItemIcon><ListIcon /></ListItemIcon>
-          <ListItemText primary={channel.name} />
-        </ListItem>
-      ))}
-      <ListItem>{error}</ListItem>
+      {channels.map((channel) =>
+        <ChannelListItem
+          nested={props.nested}
+          name={channel.name}
+          link={'/message/'.concat(channel.name)}
+        />,
+      )}
+      <ListItem key={'CHAN-ERR'}>{error}</ListItem>
     </React.Fragment>
   );
 }
 
-export default Channels;
+export default ChannelsList;
