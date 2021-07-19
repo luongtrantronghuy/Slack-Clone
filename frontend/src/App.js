@@ -15,32 +15,20 @@
  * https://reactjs.org/docs/context.html#when-to-use-context
  */
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  // useHistory,
-} from 'react-router-dom';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import BottomBar from './BottomBar.js';
 import Home from './ViewHome.js';
 import Login from './Login.js';
+import Messages from './ViewMessages.js';
 import TopBar from './TopBar.js';
-import WorkspaceList from './WorkspaceList.js';
+import WorkspaceList from './ListWorkspaces';
 import {createTheme, makeStyles} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import BottomNavigation from '@material-ui/core/BottomNavigation';
-import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Toolbar from '@material-ui/core/Toolbar';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import AlternateEmailIcon from '@material-ui/icons/AlternateEmail';
-import HomeIcon from '@material-ui/icons/Home';
-import MessageIcon from '@material-ui/icons/Message';
-import SearchIcon from '@material-ui/icons/Search';
-import Messages from './ViewMessages.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,14 +36,6 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer+ 1000,
-  },
-  bottomBar: {
-    position: 'fixed',
-    width: '100%',
-    bottom: 0,
-  },
-  bottomIcon: {
-    flexGrow: 1,
   },
   drawer: {
     flexShrink: 0,
@@ -88,22 +68,11 @@ const theme = createTheme({
  */
 function App() {
   const classes = useStyles();
-  // const history = useHistory();
-
   const [loggedIn, setLogin] = React.useState(false);
   const [dropdownOpen, setDropdown] = React.useState(false);
-  const [viewport, setViewport] = React.useState('HOME');
-
-  // const histHome = () => {
-  //   history.push('/');
-  // };
 
   const toggleDropdown = () => {
     setDropdown(!dropdownOpen);
-  };
-
-  const handleViewport = (page) => {
-    setViewport(page);
   };
 
   return (
@@ -139,40 +108,18 @@ function App() {
                   <Toolbar />
                   <Switch>
                     <Route exact path='/'>
-                      <Home handleViewport={handleViewport}/>
+                      <Home />
                     </Route>
                     <Route path='/messages/:id'>
-                      <Messages workspace={viewport.substring(4)} />
+                      <Messages />
                     </Route>
                     <Route path='/messages'>
-                      <Messages workspace={viewport.substring(4)} />
+                      <Messages />
                     </Route>
                   </Switch>
                   <Toolbar />
                 </main>
-                <BottomNavigation className={classes.bottomBar}>
-                  <BottomNavigationAction
-                    component={Link}
-                    to='/'
-                    icon={<HomeIcon fontSize='large' />}
-                  />
-                  <BottomNavigationAction
-                    value='HOME'
-                    icon={<MessageIcon fontSize='large' />}
-                  />
-                  <BottomNavigationAction
-                    value='HOME'
-                    icon={<AlternateEmailIcon fontSize='large' />}
-                  />
-                  <BottomNavigationAction
-                    value='HOME'
-                    icon={<SearchIcon fontSize='large' />}
-                  />
-                  <BottomNavigationAction
-                    value='HOME'
-                    icon={<AccountCircleIcon fontSize='large' />}
-                  />
-                </BottomNavigation>
+                <BottomBar />
               </React.Fragment>
             ) :
             <Login setLogin={setLogin} />

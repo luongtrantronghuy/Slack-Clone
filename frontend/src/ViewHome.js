@@ -3,7 +3,7 @@
  * https://stackoverflow.com/questions/64983425/material-ui-button-hover-active-background-color-and-text-color
  */
 import React from 'react';
-import Channels from './WorkspaceChannels';
+import ChannelsList from './ListChannels';
 import Users from './OpenDMs';
 import {makeStyles} from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
  */
 function Home(props) {
   const classes = useStyles();
-  const handleViewport = props.handleViewport;
   const [channelsOpen, setChannels] = React.useState(true);
   const [dmsOpen, setDms] = React.useState(true);
 
@@ -60,7 +59,7 @@ function Home(props) {
       </ListItem>
       <Collapse in={channelsOpen}>
         <List>
-          <Channels nested={classes.nested} handleViewport={handleViewport} />
+          <ChannelsList nested={classes.nested} />
           <ListItem button className={classes.nested}>
             <ListItemIcon><AddBoxIcon /></ListItemIcon>
             <ListItemText primary='Add new channel' />
