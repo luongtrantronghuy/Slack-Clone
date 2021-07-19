@@ -8,7 +8,8 @@ const db = require('./db');
  * @param {*} res
  */
 exports.getAll = async (req, res) => {
-  const channels = await db.selectAllChannels(req.query.channel);
+  const workspaces = await db.getWorkspaces(req.user.access);
+  const channels = await db.selectAllChannels(req.query.channel, workspaces[0].channels);
   if (channels.length == 0) {
     res.status(404).send();
   } else {
