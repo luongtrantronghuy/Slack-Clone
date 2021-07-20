@@ -10,6 +10,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const fetchWorkspaces = (setWorkspaces, setError) => {
+  const item = localStorage.getItem('user');
+  if (!item) {
+    return;
+  }
+  const user = JSON.parse(item);
+  const bearerToken = user ? user.accessToken : '';
+  fetch('/v0/workspaces', {
+    method: 'GET',
+    headers: new Headers({
+      'Authorization': `Bearer ${bearerToken}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    })
+    .then((json) => {
+      setError('');
+      setWorkspaces(json);
+    })
+    .catch((error) => {
+      console.log(error);
+      setWorkspaces([]);
+      setError(`${error.status} - ${error.statusText}`);
+    });
+};
+
 /**
  * Single button component for dropdown of channels
  * @param {object} props
