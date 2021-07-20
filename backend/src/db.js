@@ -172,14 +172,24 @@ exports.sendNewMessage = async (body, channel, thread) => {
   }
 };
 
-exports.selectUser = async (username) => {
-  const select = `SELECT username, info, access FROM users WHERE username = '${username}'`
+exports.selectUser = async (username, currentUser) => {
+  let select = `SELECT username, info, access FROM users`
+  if (username) {
+    select += ` WHERE username = '${username}'`;
+  } else {
+    select += ` WHERE username != '${currentUser}'`
+  }
   const query = {
     text: select,
   };
   const {rows} = await pool.query(query);
   if (rows) {
-    return {username: rows[0].username, name: rows[0].info.name, access: rows[0].access};
+    const returnArray = [];
+    for (row of rows) {
+      const user = {username: row.username, name: row.info.name, access: row.access};
+      returnArray.push(user);
+    }
+    return returnArray;
   } else {
     return undefined;
   }

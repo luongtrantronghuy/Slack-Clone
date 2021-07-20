@@ -131,7 +131,7 @@ function StatusBar(props) {
 function Account(props) {
   const classes = useStyles();
   const username = localStorage.getItem('username');
-  const [userInfo, setUserInfo] = React.useState({});
+  const [userInfo, setUserInfo] = React.useState([{name: ''}]);
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
@@ -143,7 +143,7 @@ function Account(props) {
   return (
     <React.Fragment>
       <div>{error}</div>
-      <UserCard name={userInfo.name} />
+      <UserCard name={userInfo[0].name} />
       <StatusBar />
       <Button disableRipple className={classes.endButton}>
         Set yourself as AWAY

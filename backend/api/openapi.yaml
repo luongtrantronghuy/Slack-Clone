@@ -115,14 +115,14 @@ paths:
           description: username of user
           schema:
             type: string
-          required: true
+          required: false
       responses:
         200:
           description: Succesful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/UserArray'
         404:
           description: Channel not found
           content:
@@ -236,6 +236,11 @@ components:
           type: string
         sent:
           type: string
+
+    UserArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
 
     User:
       type: object
