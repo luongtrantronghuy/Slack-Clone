@@ -6,6 +6,7 @@
  */
 exports.fetchUserInfo = (setUserInfo, setError, username) => {
   const item = localStorage.getItem('user');
+  console.log(item);
   if (!item) {
     return;
   }
