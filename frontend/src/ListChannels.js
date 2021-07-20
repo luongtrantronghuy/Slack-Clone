@@ -1,41 +1,10 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {fetchUserInfo} from './FetchUser.js';
+import {fetchWorkspaces} from './Fetcher';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListIcon from '@material-ui/icons/List';
-
-const fetchChannels = (setChannels, setError) => {
-  const item = localStorage.getItem('user');
-  if (!item) {
-    return;
-  }
-  const user = JSON.parse(item);
-  const bearerToken = user ? user.accessToken : '';
-  fetch('/v0/channels', {
-    method: 'GET',
-    headers: new Headers({
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    })
-    .then((json) => {
-      setError('');
-      setChannels(json);
-    })
-    .catch((error) => {
-      console.log(error);
-      setChannels([]);
-      setError(`${error.status} - ${error.statusText}`);
-    });
-};
 
 /**
  * Single button component for dropdown of channels
@@ -64,30 +33,21 @@ function ChannelListItem(props) {
  * @return {object} JSX
  */
 function ChannelsList(props) {
-  const username = localStorage.getItem('username');
-  const [userInfo, setUserInfo] = React.useState({});
-  const [channels, setChannels] = React.useState([]);
-  const [error, setError] = React.useState([]);
+  const [channels, setChannels] = React.useState([{channels: null}]);
 
   React.useEffect(() => {
-    fetchChannels(setChannels, setError);
-  }, []);
-
-  React.useEffect(() => {
-    fetchUserInfo(setUserInfo, setError, username);
-  }, [username]);
+    fetchWorkspaces(props.workspace, setChannels);
+  }, [props.workspace]);
 
   return (
     <React.Fragment>
-      {channels.map((channel) =>
+      {channels[0].channels && channels[0].channels.map((channel) =>
         <ChannelListItem
           nested={props.nested}
-          name={channel.name}
-          link={'/messages/'.concat(channel.name)}
-          style={userInfo}
+          name={channel}
+          link={'/messages/'.concat(channel)}
         />,
       )}
-      <ListItem key={'CHAN-ERR'}>{error}</ListItem>
     </React.Fragment>
   );
 }

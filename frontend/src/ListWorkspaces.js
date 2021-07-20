@@ -1,4 +1,5 @@
 import React from 'react';
+import {fetchUserInfo} from './Fetcher';
 import {makeStyles} from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -49,7 +50,10 @@ function WorkspaceListItem(props) {
   const classes = useStyles();
 
   return (
-    <ListItem button className={classes.button}>
+    <ListItem
+      button
+      className={classes.button}
+      onClick={() => props.setWorkspace(props.name)}>
       <ListItemText primary={props.name} />
     </ListItem>
   );
@@ -62,17 +66,18 @@ function WorkspaceListItem(props) {
  * @return {object} JSX
  */
 function WorkspaceList(props) {
-  const [workspaces, setWorkspaces] = React.useState([]);
+  const username = localStorage.getItem('username');
+  const [userInfo, setUserInfo] = React.useState([{access: []}]);
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
-    fetchWorkspaces(setWorkspaces, setError);
-  }, []);
+    fetchUserInfo(setUserInfo, setError, username);
+  }, [username]);
 
   return (
     <React.Fragment>
-      {workspaces.map((workspace) => (
-        <WorkspaceListItem name={workspace.name} />
+      {userInfo[0].access.map((code) => (
+        <WorkspaceListItem setWorkspace={props.setWorkspace} name={code} />
       ))}
       <ListItem key={'WRKSPC-ERR'}>{error}</ListItem>
     </React.Fragment>

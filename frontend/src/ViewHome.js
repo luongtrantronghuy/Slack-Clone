@@ -60,7 +60,11 @@ function Home(props) {
       </ListItem>
       <Collapse in={channelsOpen}>
         <List>
-          <ChannelsList nested={classes.nested} username={username} />
+          <ChannelsList
+            nested={classes.nested}
+            username={username}
+            workspace={props.workspace}
+          />
           <ListItem button className={classes.nested}>
             <ListItemIcon><AddBoxIcon /></ListItemIcon>
             <ListItemText primary='Add new channel' />

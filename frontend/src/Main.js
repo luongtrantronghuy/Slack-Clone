@@ -36,6 +36,7 @@ function Main(props) {
   const classes = useStyles();
   const setLogin = props.setLogin;
   const [dropdownOpen, setDropdown] = React.useState(false);
+  const [workspace, setWorkspace] = React.useState(props.workspace);
 
   const toggleDropdown = () => {
     setDropdown(!dropdownOpen);
@@ -45,7 +46,11 @@ function Main(props) {
     <React.Fragment>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <TopBar ddOpen={dropdownOpen} toggleDd={toggleDropdown} />
+          <TopBar
+            ddOpen={dropdownOpen}
+            toggleDd={toggleDropdown}
+            workspace={workspace}
+          />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -60,7 +65,7 @@ function Main(props) {
           onClick={toggleDropdown}
         >
           <List>
-            <WorkspaceList />
+            <WorkspaceList setWorkspace={setWorkspace} />
           </List>
         </div>
       </Drawer>
@@ -68,9 +73,12 @@ function Main(props) {
         <Toolbar />
         <Switch>
           <Route exact path='/'>
-            <Home />
+            <Home workspace={workspace} />
           </Route>
           <Route path='/messages/:name'>
+            <Messages />
+          </Route>
+          <Route path='/direct-messages/:user'>
             <Messages />
           </Route>
           <Route path='/account'>

@@ -1,18 +1,10 @@
-/**
- * Grab userinfo object from a fetch to api
- * @param {function} setUserInfo
- * @param {function} setError
- * @param {string} username
- */
-exports.fetchUserInfo = (setUserInfo, setError, username) => {
+const fetchAPI = (url, setReturn, setError, defaultReturn) => {
   const item = localStorage.getItem('user');
-  console.log(item);
   if (!item) {
     return;
   }
   const user = JSON.parse(item);
   const bearerToken = user ? user.accessToken : '';
-  const url = '/v0/user?username='.concat(username);
 
   const fetchInfo = async () => {
     return await fetch(url, {
@@ -32,11 +24,31 @@ exports.fetchUserInfo = (setUserInfo, setError, username) => {
   })
     .then((json) => {
       setError('');
-      setUserInfo(json);
+      setReturn(json);
+      return json;
     })
     .catch((error) => {
       console.log(error);
-      setUserInfo({});
+      setReturn(defaultReturn);
       setError(`${error.status} - ${error.statusText}`);
     });
+};
+
+exports.fetchWorkspaces = async (name, setChannels) => {
+  const setError = () => {};
+
+  await fetchAPI(
+    '/v0/workspaces?code='.concat(name),
+    setChannels,
+    setError,
+    [{channels: null}],
+  );
+};
+
+exports.fetchUserInfo = async (setUserInfo, setError, username) => {
+  if (!username) {
+    setUserInfo([{name: '', access: {}}]);
+  }
+  const url = '/v0/user?username='.concat(username);
+  await fetchAPI(url, setUserInfo, setError, [{name: '', access: {}}]);
 };
