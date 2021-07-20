@@ -4,27 +4,32 @@
  * @param {function} setError
  * @param {string} username
  */
-exports.fetchUserInfo = function(setUserInfo, setError, username) {
+exports.fetchUserInfo = (setUserInfo, setError, username) => {
   const item = localStorage.getItem('user');
+  console.log(item);
   if (!item) {
     return;
   }
   const user = JSON.parse(item);
   const bearerToken = user ? user.accessToken : '';
   const url = '/v0/user?username='.concat(username);
-  fetch(url, {
-    method: 'GET',
-    headers: new Headers({
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }),
+
+  const fetchInfo = async () => {
+    return await fetch(url, {
+      method: 'GET',
+      headers: new Headers({
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      }),
+    });
+  };
+
+  fetchInfo().then((response) => {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
   })
-    .then((response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    })
     .then((json) => {
       setError('');
       setUserInfo(json);

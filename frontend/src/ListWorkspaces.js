@@ -1,4 +1,5 @@
 import React from 'react';
+import {fetchUserInfo} from './FetchUser';
 import {makeStyles} from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -8,37 +9,6 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
   },
 }));
-
-const fetchWorkspaces = (setWorkspaces, setError) => {
-  const item = localStorage.getItem('user');
-  if (!item) {
-    return;
-  }
-  const user = JSON.parse(item);
-  const bearerToken = user ? user.accessToken : '';
-  fetch('/v0/workspaces', {
-    method: 'GET',
-    headers: new Headers({
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    })
-    .then((json) => {
-      setError('');
-      setWorkspaces(json);
-    })
-    .catch((error) => {
-      console.log(error);
-      setWorkspaces([]);
-      setError(`${error.status} - ${error.statusText}`);
-    });
-};
 
 /**
  * Single button component for dropdown of channels
@@ -62,17 +32,20 @@ function WorkspaceListItem(props) {
  * @return {object} JSX
  */
 function WorkspaceList(props) {
-  const [workspaces, setWorkspaces] = React.useState([]);
+  const username = localStorage.getItem('username');
+  const [userInfo, setUserInfo] = React.useState({});
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
-    fetchWorkspaces(setWorkspaces, setError);
-  }, []);
+    fetchUserInfo(setUserInfo, setError, username);
+  }, [username]);
+
+  console.log(userInfo);
 
   return (
     <React.Fragment>
-      {workspaces.map((workspace) => (
-        <WorkspaceListItem name={workspace.name} />
+      {userInfo.access.map((code) => (
+        <WorkspaceListItem name={code} />
       ))}
       <ListItem key={'WRKSPC-ERR'}>{error}</ListItem>
     </React.Fragment>

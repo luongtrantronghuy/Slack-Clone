@@ -15,36 +15,12 @@
  * https://reactjs.org/docs/context.html#when-to-use-context
  */
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
-import Account from './ViewAccount.js';
-import BottomBar from './BottomBar.js';
-import Home from './ViewHome.js';
+import {BrowserRouter as Router} from 'react-router-dom';
 import Login from './Login.js';
-import Messages from './ViewMessages.js';
-import TopBar from './TopBar.js';
-import WorkspaceList from './ListWorkspaces';
-import {createTheme, makeStyles} from '@material-ui/core/styles';
+import Main from './Main.js';
+import {createTheme} from '@material-ui/core/styles';
 import {ThemeProvider} from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Toolbar from '@material-ui/core/Toolbar';
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer+ 1000,
-  },
-  drawer: {
-    flexShrink: 0,
-  },
-  drawerContainer: {
-    overflow: 'auto',
-  },
-}));
 
 const theme = createTheme({
   palette: {
@@ -68,65 +44,19 @@ const theme = createTheme({
  * @return {object} JSX
  */
 function App() {
-  const classes = useStyles();
-  const [username, setUsername] = React.useState(null);
   const [loggedIn, setLogin] = React.useState(
     localStorage.getItem('user') !== null,
   );
-  const [dropdownOpen, setDropdown] = React.useState(false);
-
-  const toggleDropdown = () => {
-    setDropdown(!dropdownOpen);
-  };
 
   return (
     <div className='root'>
       <Router>
         <CssBaseline />
         <ThemeProvider theme={theme}>
-          {loggedIn ?
-            (
-              <React.Fragment>
-                <AppBar position="fixed" className={classes.appBar}>
-                  <Toolbar>
-                    <TopBar ddOpen={dropdownOpen} toggleDd={toggleDropdown} />
-                  </Toolbar>
-                </AppBar>
-                <Drawer
-                  anchor={'top'}
-                  open={dropdownOpen}
-                  className={classes.drawer}
-                  onBackdropClick={toggleDropdown}
-                >
-                  <Toolbar />
-                  <div
-                    className={classes.drawerContainer}
-                    onClick={toggleDropdown}
-                  >
-                    <List>
-                      <WorkspaceList />
-                    </List>
-                  </div>
-                </Drawer>
-                <main className={classes.main}>
-                  <Toolbar />
-                  <Switch>
-                    <Route exact path='/'>
-                      <Home />
-                    </Route>
-                    <Route path='/messages/:name'>
-                      <Messages />
-                    </Route>
-                    <Route path='/account'>
-                      <Account setLogin={setLogin} username={username} />
-                    </Route>
-                  </Switch>
-                  <Toolbar />
-                </main>
-                <BottomBar />
-              </React.Fragment>
-            ) :
-            <Login setLogin={setLogin} setUsername={setUsername} />
+          {
+            loggedIn ?
+              <Main setLogin={setLogin} /> :
+              <Login setLogin={setLogin} />
           }
         </ThemeProvider>
       </Router>
