@@ -66,7 +66,10 @@ function Login(props) {
         return res.json();
       })
       .then((json) => {
-        localStorage.setItem('username', user.username);
+        if (localStorage.getItem('username') !== user.username) {
+          localStorage.setItem('username', user.username);
+          localStorage.setItem('workspace', json.access[0]);
+        }
         localStorage.setItem('user', JSON.stringify(json));
         props.setLogin(true);
         history.push('/');
