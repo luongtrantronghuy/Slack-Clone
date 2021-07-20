@@ -138,8 +138,6 @@ function Account(props) {
     fetchUserInfo(setUserInfo, setError, username);
   }, [username]);
 
-  console.log(userInfo);
-
   return (
     <React.Fragment>
       <div>{error}</div>

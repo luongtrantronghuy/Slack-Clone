@@ -41,10 +41,10 @@ function TopBar(props) {
   const history = useHistory();
 
   // grab channel name if we're in one
-  let directory = 'Workspace 1'; // defaults to current workspace
+  let directory = props.workspace; // defaults to current workspace
   if (location.pathname !== '/') {
     const pathArray = location.pathname.split('/');
-    if (pathArray[1] === 'messages') {
+    if (pathArray[1] === 'messages' || pathArray[1] === 'direct-messages') {
       directory = pathArray[2];
     } else if (pathArray[1] === 'account') {
       directory = '';

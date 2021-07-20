@@ -19,7 +19,10 @@ function WorkspaceListItem(props) {
   const classes = useStyles();
 
   return (
-    <ListItem button className={classes.button}>
+    <ListItem
+      button
+      className={classes.button}
+      onClick={() => props.setWorkspace(props.name)}>
       <ListItemText primary={props.name} />
     </ListItem>
   );
@@ -40,12 +43,10 @@ function WorkspaceList(props) {
     fetchUserInfo(setUserInfo, setError, username);
   }, [username]);
 
-  console.log(userInfo);
-
   return (
     <React.Fragment>
       {userInfo[0].access.map((code) => (
-        <WorkspaceListItem name={code} />
+        <WorkspaceListItem setWorkspace={props.setWorkspace} name={code} />
       ))}
       <ListItem key={'WRKSPC-ERR'}>{error}</ListItem>
     </React.Fragment>

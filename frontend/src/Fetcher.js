@@ -25,6 +25,7 @@ const fetchAPI = (url, setReturn, setError, defaultReturn) => {
     .then((json) => {
       setError('');
       setReturn(json);
+      return json;
     })
     .catch((error) => {
       console.log(error);
@@ -33,7 +34,21 @@ const fetchAPI = (url, setReturn, setError, defaultReturn) => {
     });
 };
 
-exports.fetchUserInfo = (setUserInfo, setError, username) => {
+exports.fetchWorkspaces = async (name, setChannels) => {
+  const setError = () => {};
+
+  await fetchAPI(
+    '/v0/workspaces?code='.concat(name),
+    setChannels,
+    setError,
+    [{channels: null}],
+  );
+};
+
+exports.fetchUserInfo = async (setUserInfo, setError, username) => {
+  if (!username) {
+    setUserInfo([{name: '', access: {}}]);
+  }
   const url = '/v0/user?username='.concat(username);
-  fetchAPI(url, setUserInfo, setError, [{name: '', access: {}}]);
+  await fetchAPI(url, setUserInfo, setError, [{name: '', access: {}}]);
 };
