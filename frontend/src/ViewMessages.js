@@ -1,6 +1,7 @@
 import React from 'react';
 // import {useParams} from 'react-router-dom';
-import {Button, Grid, makeStyles, Table} from '@material-ui/core';
+import {Button, Divider, Grid, Typography} from '@material-ui/core';
+import {List, makeStyles, Table} from '@material-ui/core';
 import {TableBody, TableCell, TableRow} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -38,6 +39,9 @@ const fetchMessages = (setMessages, setError, directory) => {
 };
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    flexWrap: 'wrap',
+  },
   hidediv: {
     borderBottom: 'none',
   },
@@ -72,6 +76,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /**
+ * Single button component for dropdown of channels
+ * @param {object} props
+ * @return {object} JSX
+ */
+function ListMessage(props) {
+  const classes = useStyles();
+  return (
+    <>
+      {props.message.map((message) => {
+        return (
+          <>
+            <TableRow>
+              <TableCell
+                className={classes.hidediv}
+                style={{width: '1%'}}
+              >
+                <Typography>
+                  {message.content}
+                </Typography>
+                <Button>
+                  Thread
+                </Button>
+              </TableCell>
+            </TableRow>
+          </>
+        );
+      })}
+    </>
+  );
+}
+
+/**
  * Grabs all messages from defined workspace
  * @param {object} props
  * @return {object} JSX
@@ -97,7 +133,7 @@ function Messages(props) {
     fetchMessages(setMessages, setError, directory);
   }, [directory]);
 
-  // console.log(messages); // print out the message in console for testing
+  console.log(messages); // print out the message in console for testing
 
   return (
     <>
@@ -108,26 +144,21 @@ function Messages(props) {
         alignItems='center'
       >
         <Table className={classes.message}>
-          <TableBody >
-            {(messages.sort((b, a) =>{
-              return new Date(a.sent) - new Date(b.sent);
-            })).map((message) => {
-              return (
-                <>
-                  <TableRow>
-                    {message.content}
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className={classes.hidediv}>
-                      <Button>
-                        Thread
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                </>
-              );
-            })}
-          </TableBody>
+          <List>
+            <TableBody >
+              {messages.map((message) => {
+                return (
+                  <>
+                    <TableRow >
+                      {message.time}
+                    </TableRow>
+                    <Divider />
+                    <ListMessage message={message.messages}/>
+                  </>
+                );
+              })}
+            </TableBody>
+          </List>
         </Table>
       </Grid>
       <div className={classes.paper}>
