@@ -1,6 +1,7 @@
 import React from 'react';
 // import {useParams} from 'react-router-dom';
-import {makeStyles} from '@material-ui/core';
+import {Button, Grid, makeStyles, Table} from '@material-ui/core';
+import {TableBody, TableCell, TableRow} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import {useLocation} from 'react-router-dom';
@@ -37,6 +38,16 @@ const fetchMessages = (setMessages, setError, directory) => {
 };
 
 const useStyles = makeStyles((theme) => ({
+  hidediv: {
+    borderBottom: 'none',
+  },
+  message: {
+    fontSize: 17,
+    width: '80%',
+    overflowX: 'auto',
+    bottom: 120,
+    position: 'fixed',
+  },
   paper: {
     position: 'absolute',
     height: '100vh',
@@ -69,7 +80,7 @@ function Messages(props) {
   const classes = useStyles();
   // grab channel name if we're in one
   const location = useLocation();
-  const [message, setMessages] = React.useState([]);
+  const [messages, setMessages] = React.useState([]);
   const [error, setError] = React.useState([]);
 
   let directory = 'Workspace 1'; // defaults to current workspace
@@ -86,19 +97,51 @@ function Messages(props) {
     fetchMessages(setMessages, setError, directory);
   }, [directory]);
 
-  console.log(message); // print out the message in console for testing
+  // console.log(messages); // print out the message in console for testing
 
   return (
-    <div className={classes.paper}>
-      <div key={error}>{console.log(message)}</div>
-      <Toolbar />
-      <div className={classes.messageWrapper}>
-        <form noValidate autoComplete="off">
-          <TextField id='compose-msg' placeholder='send msg' variant='outlined'
-            color='primary' className={classes.messageBox} />
-        </form>
+    <>
+      <Grid
+        container
+        direction='rows'
+        justifyContent='center'
+        alignItems='center'
+      >
+        <Table className={classes.message}>
+          <TableBody >
+            {(messages.sort((b, a) =>{
+              return new Date(a.sent) - new Date(b.sent);
+            })).map((message) => {
+              return (
+                <>
+                  <TableRow>
+                    {message.content}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className={classes.hidediv}>
+                      <Button>
+                        Thread
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </Grid>
+      <div className={classes.paper}>
+        <div key={error}>{}</div>
+        <Toolbar />
+        <div className={classes.messageWrapper}>
+          <form noValidate autoComplete="off">
+            <TextField id='compose-msg' placeholder='send msg'
+              variant='outlined'
+              color='primary' className={classes.messageBox} />
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
