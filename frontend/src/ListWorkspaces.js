@@ -1,5 +1,5 @@
 import React from 'react';
-import {fetchUserInfo} from './FetchUser';
+import {fetchUserInfo} from './Fetcher';
 import {makeStyles} from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -33,7 +33,7 @@ function WorkspaceListItem(props) {
  */
 function WorkspaceList(props) {
   const username = localStorage.getItem('username');
-  const [userInfo, setUserInfo] = React.useState({});
+  const [userInfo, setUserInfo] = React.useState([{access: []}]);
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
@@ -44,7 +44,7 @@ function WorkspaceList(props) {
 
   return (
     <React.Fragment>
-      {userInfo.access.map((code) => (
+      {userInfo[0].access.map((code) => (
         <WorkspaceListItem name={code} />
       ))}
       <ListItem key={'WRKSPC-ERR'}>{error}</ListItem>

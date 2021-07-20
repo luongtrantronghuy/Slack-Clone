@@ -73,6 +73,9 @@ function Main(props) {
           <Route path='/messages/:name'>
             <Messages />
           </Route>
+          <Route path='/direct-messages/:user'>
+            <Messages />
+          </Route>
           <Route path='/account'>
             <Account setLogin={setLogin} />
           </Route>

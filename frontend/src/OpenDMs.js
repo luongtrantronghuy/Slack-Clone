@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
-import {fetchUserInfo} from './FetchUser.js';
+import {fetchUserInfo} from './Fetcher';
 // import LiveHelpIcon from '@material-ui/icons/LiveHelp';
 import PersonIcon from '@material-ui/icons/Person';
 
@@ -48,7 +48,7 @@ function UserListItem(props) {
       className={props.nested}
       component={Link}
       to={props.link}
-      key={'user/'.concat(props.name)}
+      key={'direct-messages/'.concat(props.name)}
     >
       <ListItemIcon><PersonIcon /></ListItemIcon>
       <ListItemText primary={props.name} />
@@ -64,7 +64,7 @@ function UserListItem(props) {
  */
 function Users(props) {
   const username = localStorage.getItem('username');
-  const [userInfo, setUserInfo] = React.useState({});
+  const [userInfo, setUserInfo] = React.useState([{name: ''}]);
   const [userList, setUserList] = React.useState([]);
   const [error, setError] = React.useState([]);
 
@@ -78,12 +78,16 @@ function Users(props) {
 
   return (
     <React.Fragment>
+      <UserListItem
+        nested={props.nested}
+        name={userInfo[0].name}
+        link={'/user/'.concat(userInfo[0].name).concat(' (You)')}
+      />
       {userList.map((user) =>
         <UserListItem
           nested={props.nested}
           name={user.name}
           link={'/user/'.concat(user.name)}
-          style={userInfo}
         />,
       )}
       <ListItem key={'CHAN-ERR'}>{error}</ListItem>

@@ -1,18 +1,10 @@
-/**
- * Grab userinfo object from a fetch to api
- * @param {function} setUserInfo
- * @param {function} setError
- * @param {string} username
- */
-exports.fetchUserInfo = (setUserInfo, setError, username) => {
+const fetchAPI = (url, setReturn, setError, defaultReturn) => {
   const item = localStorage.getItem('user');
-  console.log(item);
   if (!item) {
     return;
   }
   const user = JSON.parse(item);
   const bearerToken = user ? user.accessToken : '';
-  const url = '/v0/user?username='.concat(username);
 
   const fetchInfo = async () => {
     return await fetch(url, {
@@ -32,11 +24,16 @@ exports.fetchUserInfo = (setUserInfo, setError, username) => {
   })
     .then((json) => {
       setError('');
-      setUserInfo(json);
+      setReturn(json);
     })
     .catch((error) => {
       console.log(error);
-      setUserInfo({});
+      setReturn(defaultReturn);
       setError(`${error.status} - ${error.statusText}`);
     });
+};
+
+exports.fetchUserInfo = (setUserInfo, setError, username) => {
+  const url = '/v0/user?username='.concat(username);
+  fetchAPI(url, setUserInfo, setError, [{name: '', access: {}}]);
 };

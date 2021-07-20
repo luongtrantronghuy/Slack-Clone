@@ -5,7 +5,7 @@
  * * needs emoji picker added to status box
  */
 import React from 'react';
-import {fetchUserInfo} from './FetchUser';
+import {fetchUserInfo} from './Fetcher';
 import {makeStyles} from '@material-ui/core/styles';
 import PersonIcon from '@material-ui/icons/Person';
 import Avatar from '@material-ui/core/Avatar';
