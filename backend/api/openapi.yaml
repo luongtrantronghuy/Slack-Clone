@@ -16,14 +16,7 @@ servers:
 paths:
   /channels:
     get:
-      description: Get messages from channel
-      parameters:
-        - in: query
-          name: workspace
-          schema:
-            type: string
-          required: false
-          description: Name of workspace
+      description: Get data from channel
       responses:
         200:
           description: Succesful
@@ -45,6 +38,34 @@ paths:
                 $ref: '#/components/schemas/Error'
 
   /channels/{channel}:
+    get:
+      description: Get all messages in Channel
+      parameters:
+      - name: channel
+        in: path
+        description: Name of channel
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: Message Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelResponseArray'
+        404:
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     post:
       description: Send New Message
       parameters:
@@ -170,6 +191,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Message'
+
+    ChannelResponseArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/Message'
 
     NewMessage:
       type: object

@@ -39,3 +39,12 @@ exports.sendMessage = async (req, res) => {
     res.status(400).send();
   }
 };
+
+exports.getMessage = async (req, res) => {
+  const messages = await db.getMessage(req.params.channel);
+  if (messages.length > 0) {
+    res.status(200).json(messages);
+  } else {
+    res.status(404).send();
+  }
+};

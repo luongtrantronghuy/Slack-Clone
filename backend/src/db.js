@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const {Pool} = require('pg');
 
 const pool = new Pool({
@@ -76,6 +77,37 @@ exports.selectAllChannels = async (channel, channelsList) => {
   return channels;
 };
 
+/**
+ *
+ * @param {*} channel
+ */
+exports.getMessage = async (channel) => {
+  const select = `SELECT messages, thread FROM channels WHERE channel = '${channel}'`;
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows.length > 0) {
+    const returnArray = [];
+    for (row of rows) {
+      row.messages.thread = [];
+      for (mess of row.thread) {
+        const jsonObj = JSON.parse(mess);
+        row.messages.thread.push(jsonObj);
+      }
+      returnArray.push(row.messages);
+    }
+    return returnArray;
+  } else {
+    return undefined;
+  }
+}
+
+/**
+ *
+ * @param {*} username
+ * @returns
+ */
 exports.find = async (username) => {
   const select = `SELECT username, info, access FROM users
     WHERE username = '${username}'`;
