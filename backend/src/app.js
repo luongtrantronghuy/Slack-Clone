@@ -33,6 +33,7 @@ app.use(
 
 // Your routes go here
 app.get('/v0/channels', auth.check, channels.getAll);
+app.get('/v0/channels/:channel', auth.check, channels.getMessage);
 app.post('/v0/channels/:channel:thread', auth.check, channels.sendMessage);
 app.get('/v0/user', auth.check, user.getUser);
 app.get('/v0/workspaces', auth.check, workspaces.getWorkspaces);

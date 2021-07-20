@@ -76,7 +76,7 @@ function Home(props) {
       </ListItem>
       <Collapse in={dmsOpen}>
         <List>
-          <Users nestedClass={classes.nested} />
+          <Users nested={classes.nested} />
           <ListItem button className={classes.nested}>
             <ListItemIcon><PersonAddIcon /></ListItemIcon>
             <ListItemText primary='Add Teammate' />

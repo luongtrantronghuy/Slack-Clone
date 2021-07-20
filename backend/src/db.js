@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const {Pool} = require('pg');
 
 const pool = new Pool({
@@ -76,6 +77,37 @@ exports.selectAllChannels = async (channel, channelsList) => {
   return channels;
 };
 
+/**
+ *
+ * @param {*} channel
+ */
+exports.getMessage = async (channel) => {
+  const select = `SELECT messages, thread FROM channels WHERE channel = '${channel}'`;
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows.length > 0) {
+    const returnArray = [];
+    for (row of rows) {
+      row.messages.thread = [];
+      for (mess of row.thread) {
+        const jsonObj = JSON.parse(mess);
+        row.messages.thread.push(jsonObj);
+      }
+      returnArray.push(row.messages);
+    }
+    return returnArray;
+  } else {
+    return undefined;
+  }
+}
+
+/**
+ *
+ * @param {*} username
+ * @returns
+ */
 exports.find = async (username) => {
   const select = `SELECT username, info, access FROM users
     WHERE username = '${username}'`;
@@ -140,14 +172,24 @@ exports.sendNewMessage = async (body, channel, thread) => {
   }
 };
 
-exports.selectUser = async (username) => {
-  const select = `SELECT username, info, access FROM users WHERE username = '${username}'`
+exports.selectUser = async (username, currentUser) => {
+  let select = `SELECT username, info, access FROM users`
+  if (username) {
+    select += ` WHERE username = '${username}'`;
+  } else {
+    select += ` WHERE username != '${currentUser}'`
+  }
   const query = {
     text: select,
   };
   const {rows} = await pool.query(query);
   if (rows) {
-    return {username: rows[0].username, name: rows[0].info.name, access: rows[0].access};
+    const returnArray = [];
+    for (row of rows) {
+      const user = {username: row.username, name: row.info.name, access: row.access};
+      returnArray.push(user);
+    }
+    return returnArray;
   } else {
     return undefined;
   }

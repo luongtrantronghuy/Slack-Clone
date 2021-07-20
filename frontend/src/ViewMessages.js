@@ -3,6 +3,38 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import {useLocation} from 'react-router-dom';
+
+const fetchMessages = (setMessages, setError, directory) => {
+  const item = localStorage.getItem('user');
+  if (!item) {
+    return;
+  }
+  const user = JSON.parse(item);
+  const bearerToken = user ? user.accessToken : '';
+  fetch('/v0/channels/'+directory, {
+    method: 'GET',
+    headers: new Headers({
+      'Authorization': `Bearer ${bearerToken}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw response;
+      }
+      return response.json();
+    })
+    .then((json) => {
+      setError('');
+      setMessages(json);
+    })
+    .catch((error) => {
+      console.log(error);
+      setMessages([]);
+      setError(`${error.status} - ${error.statusText}`);
+    });
+};
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,21 +67,30 @@ const useStyles = makeStyles((theme) => ({
  */
 function Messages(props) {
   const classes = useStyles();
-  // const {name} = useParams(); // id of channel we're in
-  // const channels = [ // for testing, in real, grab channels from curr ws
-  //   {id: 1, name: 'general', messages: []},
-  //   {id: 2, name: 'questions', messages: []},
-  //   {id: 3, name: 'discussions', messages: []},
-  //   {id: 4, name: 'memes', messages: []},
-  //   {id: 5, name: 'serious', messages: []},
-  // ];
+  // grab channel name if we're in one
+  const location = useLocation();
+  const [message, setMessages] = React.useState([]);
+  const [error, setError] = React.useState([]);
 
-  // React.useEffect(() => {
-  //   fetchMessage(setWorkspaces, setError);
-  // }, []);
+  let directory = 'Workspace 1'; // defaults to current workspace
+  if (location.pathname !== '/') {
+    const pathArray = location.pathname.split('/');
+    if (pathArray[1] === 'messages') {
+      directory = pathArray[2];
+    } else if (pathArray[1] === 'account') {
+      directory = '';
+    }
+  }
+
+  React.useEffect(() => {
+    fetchMessages(setMessages, setError, directory);
+  }, [directory]);
+
+  console.log(message); // print out the message in console for testing
 
   return (
     <div className={classes.paper}>
+      <div key={error}>{console.log(message)}</div>
       <Toolbar />
       <div className={classes.messageWrapper}>
         <form noValidate autoComplete="off">
