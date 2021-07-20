@@ -130,7 +130,7 @@ function StatusBar(props) {
  */
 function Account(props) {
   const classes = useStyles();
-  const username = props.username;
+  const username = localStorage.getItem('username');
   const [userInfo, setUserInfo] = React.useState({});
   const [error, setError] = React.useState([]);
 

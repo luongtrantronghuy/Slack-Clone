@@ -52,7 +52,6 @@ function Login(props) {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    props.setUsername(user.username);
     fetch('authenticate', {
       method: 'POST',
       body: JSON.stringify(user),
@@ -67,6 +66,7 @@ function Login(props) {
         return res.json();
       })
       .then((json) => {
+        localStorage.setItem('username', user.username);
         localStorage.setItem('user', JSON.stringify(json));
         props.setLogin(true);
         history.push('/');

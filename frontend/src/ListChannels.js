@@ -1,5 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+import {fetchUserInfo} from './FetchUser.js';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -63,12 +64,18 @@ function ChannelListItem(props) {
  * @return {object} JSX
  */
 function ChannelsList(props) {
+  const username = localStorage.getItem('username');
+  const [userInfo, setUserInfo] = React.useState({});
   const [channels, setChannels] = React.useState([]);
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
     fetchChannels(setChannels, setError);
   }, []);
+
+  React.useEffect(() => {
+    fetchUserInfo(setUserInfo, setError, username);
+  }, [username]);
 
   return (
     <React.Fragment>
@@ -77,6 +84,7 @@ function ChannelsList(props) {
           nested={props.nested}
           name={channel.name}
           link={'/messages/'.concat(channel.name)}
+          style={userInfo}
         />,
       )}
       <ListItem key={'CHAN-ERR'}>{error}</ListItem>

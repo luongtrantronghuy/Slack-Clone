@@ -69,7 +69,6 @@ const theme = createTheme({
  */
 function App() {
   const classes = useStyles();
-  const [username, setUsername] = React.useState(null);
   const [loggedIn, setLogin] = React.useState(
     localStorage.getItem('user') !== null,
   );
@@ -118,7 +117,7 @@ function App() {
                       <Messages />
                     </Route>
                     <Route path='/account'>
-                      <Account setLogin={setLogin} username={username} />
+                      <Account setLogin={setLogin} />
                     </Route>
                   </Switch>
                   <Toolbar />
@@ -126,7 +125,7 @@ function App() {
                 <BottomBar />
               </React.Fragment>
             ) :
-            <Login setLogin={setLogin} setUsername={setUsername} />
+            <Login setLogin={setLogin} />
           }
         </ThemeProvider>
       </Router>
