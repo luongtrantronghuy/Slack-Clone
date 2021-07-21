@@ -54,14 +54,14 @@ function orderMessages(messages) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr',
       'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
       'Nov', 'Dec'];
-    if (day === currDate.getDate() &&
+      if (day === currDate.getDate() &&
       month === currDate.getMonth() &&
       year === currDate.getFullYear()) {
       newTime = 'Today';
     } else if (year === currDate.getFullYear()) {
       newTime = months[month] + ' ' + day;
     } else {
-      newTime = months[month] + ' ' + year.toString();
+      newTime = day + ' '+ months[month] + ', ' + year.toString();
     }
     if (ordered.length == 0) {
       ordered.push({time: newTime, messages: [message]});
