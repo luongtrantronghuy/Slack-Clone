@@ -34,8 +34,13 @@ const fetchAPI = (url, setReturn, setError, defaultReturn) => {
     });
 };
 
-exports.fetchMessages = async (setMessages, setError, directory) => {
-  const url = '/v0/channels/'.concat(directory);
+exports.fetchThread = async (setMessages, setError, channel, thread) => {
+  const url ='/v0/channels/' + channel + '?thread=' + thread;
+  await fetchAPI(url, setMessages, setError, []);
+};
+
+exports.fetchMessages = async (setMessages, setError, channel) => {
+  const url = '/v0/channels/'.concat(channel);
   await fetchAPI(url, setMessages, setError, []);
 };
 

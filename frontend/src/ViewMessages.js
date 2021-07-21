@@ -5,7 +5,7 @@
 import React from 'react';
 // import {useParams} from 'react-router-dom';
 import {Link} from 'react-router-dom';
-import {fetchMessages} from './Fetcher';
+import {fetchMessages, fetchThread} from './Fetcher';
 import {Divider, ListItem} from '@material-ui/core';
 import {List, makeStyles} from '@material-ui/core';
 import {TableBody, TableRow} from '@material-ui/core';
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   message: {
     margin: '0 auto',
     fontSize: 17,
-    width: '100%',
+    width: '100vw',
     height: '80vh',
     maxWidth: '1000px',
     overflowY: 'scroll',
@@ -58,6 +58,15 @@ const useStyles = makeStyles((theme) => ({
     gridTemplateColumns: '50px 90%',
     gridTemplateRows: '25px auto 25px',
   },
+  threadReply: {
+    color: 'black',
+    marginTop: '20px',
+    marginBottom: '10px',
+    marginLeft: '50px', // addition
+    display: 'grid',
+    gridTemplateColumns: '50px 90%',
+    gridTemplateRows: '25px auto 25px',
+  },
   messageUser: {
     marginLeft: '10px',
     marginTop: '10px',
@@ -65,6 +74,8 @@ const useStyles = makeStyles((theme) => ({
     gridColumn: 2,
   },
   content: {
+    maxWidth: '55vw',
+    wordWrap: 'break-word',
     marginLeft: '10px',
     marginTop: '10px',
     gridRow: 2,
@@ -81,16 +92,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const postMessage = (channel, bodyObj, setReturn, setError) => {
+const postMessage = (channel, thread, bodyObj, setReturn, setError) => {
   const item = localStorage.getItem('user');
   if (!item) {
     return;
   }
   const user = JSON.parse(item);
   const bearerToken = user ? user.accessToken : '';
+  console.log(thread);
+  const url = thread === undefined ? '/v0/channels/'.concat(channel) :
+    '/v0/channels/' + channel + '?thread=' + thread;
 
   const fetchInfo = async () => {
-    return await fetch('/v0/channels/'.concat(channel), {
+    return await fetch(url, {
       method: 'POST',
       headers: new Headers({
         'Authorization': `Bearer ${bearerToken}`,
@@ -126,19 +140,21 @@ const postMessage = (channel, bodyObj, setReturn, setError) => {
 function ListMessage(props) {
   const classes = useStyles();
 
-  const openThread = (message) => {
-    console.log(message);
-  };
+  // const openThread = (message) => {
+  //   console.log(message);
+  // };
 
   return (
     <>
       {props.message.map((message) => {
         return (
           <ListItem
-            component={Link}
-            to={'/messages/' + props.location + '/' + message.id}
-            onClick={() => openThread(message)}
-            className={classes.messageBox}
+            component={!props.inThread && Link}
+            to={'/messages/' + props.channel + '/' + message.id}
+            // onClick={() => openThread(message)}
+            className={props.inThread ?
+              classes.threadReply : classes.messageBox
+            }
           >
             <div className={classes.avatar}>
               <Avatar className={classes.avatar}>
@@ -146,7 +162,7 @@ function ListMessage(props) {
               </Avatar>
             </div>
             <div className={classes.messageUser}>
-              User
+              {message.from}
             </div>
             <div className={classes.content}>
               {message.content}
@@ -170,8 +186,8 @@ function Messages(props) {
   const classes = useStyles();
   const scrollRef = React.useRef();
   const pathnameArray = useLocation().pathname.split('/');
-  const directory = pathnameArray[1];
-  const location = pathnameArray[2];
+  pathnameArray.splice(0, 1);
+  const [directory, channel, thread] = pathnameArray; // insert , thread]
   const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [newMessage, sendNewMessage] = React.useState({});
@@ -179,10 +195,14 @@ function Messages(props) {
 
   React.useEffect(() => {
     if (directory === 'messages') {
-      fetchMessages(setMessages, setError, location);
+      if (thread === undefined) {
+        fetchMessages(setMessages, setError, channel);
+      } else {
+        fetchThread(setMessages, setError, channel, thread);
+        console.log(messages);
+      }
     }
-    scrollRef.current.scrollIntoView({behavior: 'smooth'});
-  }, [location, directory]);
+  }, [directory, channel, thread, messages]);
 
   const changeHandler = (event) => {
     composeMessage(event.target.value);
@@ -193,10 +213,11 @@ function Messages(props) {
     if (directory === 'messages') {
       const newBody = {
         content: draft,
-        to: location,
+        to: channel,
         from: localStorage.getItem('username'),
       };
-      await postMessage(location, newBody, sendNewMessage, setError);
+      await postMessage(channel, thread, newBody, sendNewMessage, setError);
+      scrollRef.current.scrollIntoView({behavior: 'smooth'});
     }
     console.log(newMessage);
     console.log(draft);
@@ -211,13 +232,13 @@ function Messages(props) {
         <div className={classes.messageWrapper}>
           <form noValidate autoComplete="off" onSubmit={submitHandler}>
             <TextField
-              id='compose-msg'
-              placeholder='send msg'
-              variant='outlined'
-              color='primary'
-              className={classes.inputField}
-              onChange={changeHandler}
               value={draft}
+              color='primary'
+              id='compose-msg'
+              variant='outlined'
+              placeholder='send msg'
+              onChange={changeHandler}
+              className={classes.inputField}
             />
           </form>
         </div>
@@ -226,11 +247,18 @@ function Messages(props) {
             {messages.map((message) => {
               return (
                 <>
-                  <TableRow >
-                    {message.time}
-                  </TableRow>
+                  {
+                    thread === undefined &&
+                      <TableRow >
+                        {message.time}
+                      </TableRow>
+                  }
                   <Divider />
-                  <ListMessage location={location} message={message.messages}/>
+                  <ListMessage
+                    channel={channel}
+                    message={message.messages}
+                    inThread={thread !== undefined}
+                  />
                 </>
               );
             })}
