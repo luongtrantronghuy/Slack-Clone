@@ -1,42 +1,12 @@
 import React from 'react';
 // import {useParams} from 'react-router-dom';
+import {fetchMessages} from './Fetcher';
 import {Button, Divider, Grid, Typography} from '@material-ui/core';
 import {List, makeStyles, Table} from '@material-ui/core';
 import {TableBody, TableCell, TableRow} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import {useLocation} from 'react-router-dom';
-
-const fetchMessages = (setMessages, setError, directory) => {
-  const item = localStorage.getItem('user');
-  if (!item) {
-    return;
-  }
-  const user = JSON.parse(item);
-  const bearerToken = user ? user.accessToken : '';
-  fetch('/v0/channels/'+directory, {
-    method: 'GET',
-    headers: new Headers({
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    })
-    .then((json) => {
-      setError('');
-      setMessages(json);
-    })
-    .catch((error) => {
-      console.log(error);
-      setMessages([]);
-      setError(`${error.status} - ${error.statusText}`);
-    });
-};
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -114,26 +84,24 @@ function ListMessage(props) {
  */
 function Messages(props) {
   const classes = useStyles();
-  // grab channel name if we're in one
-  const location = useLocation();
+  const location = useLocation().pathname.split('/')[2];
+  const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [error, setError] = React.useState([]);
 
-  let directory = 'Workspace 1'; // defaults to current workspace
-  if (location.pathname !== '/') {
-    const pathArray = location.pathname.split('/');
-    if (pathArray[1] === 'messages' || pathArray[1] === 'direct-messages') {
-      directory = pathArray[2];
-    } else if (pathArray[1] === 'account') {
-      directory = '';
-    }
-  }
-
   React.useEffect(() => {
-    fetchMessages(setMessages, setError, directory);
-  }, [directory]);
+    fetchMessages(setMessages, setError, location);
+  }, [location]);
 
-  console.log(messages); // print out the message in console for testing
+  const changeHandler = (event) => {
+    composeMessage(event.target.value);
+  };
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    console.log('sent message: '.concat(draft));
+    composeMessage('');
+  };
 
   return (
     <>
@@ -165,10 +133,16 @@ function Messages(props) {
         <div key={error}>{}</div>
         <Toolbar />
         <div className={classes.messageWrapper}>
-          <form noValidate autoComplete="off">
-            <TextField id='compose-msg' placeholder='send msg'
+          <form noValidate autoComplete="off" onSubmit={submitHandler}>
+            <TextField
+              id='compose-msg'
+              placeholder='send msg'
               variant='outlined'
-              color='primary' className={classes.messageBox} />
+              color='primary'
+              className={classes.messageBox}
+              onChange={changeHandler}
+              value={draft}
+            />
           </form>
         </div>
       </div>
