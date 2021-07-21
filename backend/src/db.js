@@ -55,7 +55,7 @@ exports.selectAllChannels = async (channel, channelsList) => {
   }
   const channels = [];
   for (row of rowss) {
-    if (row.thread[0] != '') { // if thread is empty, ignore
+    if (row.thread[0] != '') { // if thread is not empty, parse
       row.thread = row.thread.map((msg) => JSON.parse(msg));
     }
     row.messages = {id: row.id, ...row.messages, thread: row.thread};
@@ -81,8 +81,12 @@ exports.selectAllChannels = async (channel, channelsList) => {
  *
  * @param {*} channel
  */
-exports.getMessage = async (channel) => {
-  const select = `SELECT id, messages, thread FROM channels WHERE channel = '${channel}'`;
+exports.getMessage = async (channel, thread) => {
+  let select = `SELECT id, messages, thread FROM channels WHERE`;
+  if (thread) {
+    select += ` id='${thread}' AND`
+  }
+  select += ` channel = '${channel}'`
   const query = {
     text: select,
   };
@@ -93,17 +97,19 @@ exports.getMessage = async (channel) => {
       row.messages.id = row.id;
       tempThread = [];
       for (mess of row.thread) {
-        if (mess === ''){
-          tempThread.push({});
-        } else {
+        if (mess !== ''){
           const jsonObj = JSON.parse(mess);
           tempThread.push(jsonObj);
         }
       }
+      row.messages.thread = tempThread;
       returnArray.push(row.messages);
     }
-    console.log(returnArray);
-    return returnArray;
+    if (thread) {
+      return tempThread;
+    } else {
+      return returnArray;
+    }
   } else {
     return undefined;
   }
@@ -282,10 +288,14 @@ exports.verifyChannels = async (channelList, username) => {
   }
 };
 
-exports.getDM = async (currUser, user2) => {
+exports.getDM = async (currUser, user2, thread) => {
   let select = 'SELECT id, from_user, to_user, content, sent_at, thread FROM dm';
-  select += ` WHERE (from_user='${currUser}' AND to_user='${user2}') OR`;
-  select += ` (from_user='${user2}' AND to_user='${currUser}')`;
+  select += ` WHERE `;
+  if (thread) {
+    select += `(id= '${thread}') AND `
+  }
+  select += `((from_user='${currUser}' AND to_user='${user2}')
+    OR (from_user='${user2}' AND to_user='${currUser}'))`;
   const query = {
     text: select,
   };
@@ -294,16 +304,64 @@ exports.getDM = async (currUser, user2) => {
     for (row of rows) {
       const tempThread = [];
       for (mess of row.thread) {
-        if (mess === ''){
-          tempThread.push({});
-        } else {
+        if (mess !== ''){
           const jsonObj = JSON.parse(mess);
           tempThread.push(jsonObj);
         }
       }
       row.thread = tempThread;
     }
-    return rows;
+    if (thread) {
+      return rows[0].thread;
+    } else {
+      return rows;
+    }
+  } else {
+    return undefined;
+  }
+};
+
+exports.sendDM = async (currUser, user2, body, thread) => {
+  if (user2 === currUser) {
+    return undefined;
+  }
+  let returnID = '';
+  const newDate = new Date().toISOString();
+  if (thread && thread.match(idRe)) {
+    returnId = thread;
+    body.sent_at = newDate;
+    body.from_user = currUser;
+    body.to_user = user2;
+    const json = JSON.stringify(body);
+    const update = `UPDATE dm SET thread = array_append
+        (thread, '${json}') WHERE id= '${thread}'`;
+    const query = {
+      text: update,
+    };
+    await pool.query(query);
+    returnID = thread;
+  } else {
+    const newID = createUUID();
+    const insert = `INSERT INTO dm(id, from_user, to_user, content, sent_at, thread)
+      VALUES ($1, $2, $3, $4, $5, $6)`;
+    const query = {
+      text: insert,
+      values: [newID, currUser, user2, body.content, newDate, []],
+    }
+    await pool.query(query);
+    returnID = newID;
+  }
+  const select1 = `SELECT id, from_user, to_user, content, sent_at, thread
+      FROM dm WHERE id = '${returnID}'`;
+  const query1 = {text: select1};
+  const {rows} = await pool.query(query1);
+  if (rows.length > 0) {
+    rows[0].thread = rows[0].thread.map((x) => JSON.parse(x));
+    if (thread) {
+      return rows[0].thread;
+    } else {
+      return rows[0];
+    }
   } else {
     return undefined;
   }
