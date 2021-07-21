@@ -54,7 +54,7 @@ function orderMessages(messages) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr',
       'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
       'Nov', 'Dec'];
-      if (day === currDate.getDate() &&
+    if (day === currDate.getDate() &&
       month === currDate.getMonth() &&
       year === currDate.getFullYear()) {
       newTime = 'Today';
