@@ -82,7 +82,7 @@ exports.selectAllChannels = async (channel, channelsList) => {
  * @param {*} channel
  */
 exports.getMessage = async (channel) => {
-  const select = `SELECT messages, thread FROM channels WHERE channel = '${channel}'`;
+  const select = `SELECT id, messages, thread FROM channels WHERE channel = '${channel}'`;
   const query = {
     text: select,
   };
@@ -90,6 +90,7 @@ exports.getMessage = async (channel) => {
   if (rows.length > 0) {
     const returnArray = [];
     for (row of rows) {
+      row.messages.id = row.id;
       row.messages.thread = [];
       for (mess of row.thread) {
         const jsonObj = JSON.parse(mess);
