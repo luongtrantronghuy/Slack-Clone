@@ -79,6 +79,9 @@ function Main(props) {
           <Route path='/user/:user'>
             <Messages />
           </Route>
+          <Route path='/user/:user/:thread'>
+            <Messages />
+          </Route>
           <Route path='/account'>
             <Account setLogin={setLogin} />
           </Route>

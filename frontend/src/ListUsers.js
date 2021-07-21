@@ -87,7 +87,7 @@ function Users(props) {
         <UserListItem
           nested={props.nested}
           name={user.name}
-          link={'/user/'.concat(user.name)}
+          link={'/user/'.concat(user.username)}
         />,
       )}
       <ListItem key={'CHAN-ERR'}>{error}</ListItem>

@@ -44,6 +44,16 @@ exports.fetchMessages = async (setMessages, setError, channel) => {
   await fetchAPI(url, setMessages, setError, []);
 };
 
+exports.fetchDMThread = async (setMessages, setError, username, thread) => {
+  const url = '/v0/dm/' + username + '?thread=' + thread;
+  await fetchAPI(url, setMessages, setError, []);
+};
+
+exports.fetchDMs = async (setMessages, setError, username) => {
+  const url = '/v0/dm/'.concat(username);
+  await fetchAPI(url, setMessages, setError, []);
+};
+
 exports.fetchWorkspaces = async (name, setChannels) => {
   const setError = () => {};
 

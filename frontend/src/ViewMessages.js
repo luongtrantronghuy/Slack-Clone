@@ -5,7 +5,7 @@
 import React from 'react';
 // import {useParams} from 'react-router-dom';
 import {Link} from 'react-router-dom';
-import {fetchMessages, fetchThread} from './Fetcher';
+import {fetchMessages, fetchThread, fetchDMs, fetchDMThread} from './Fetcher';
 import {Divider, ListItem} from '@material-ui/core';
 import {List, makeStyles} from '@material-ui/core';
 import {TableBody, TableRow} from '@material-ui/core';
@@ -92,16 +92,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const postMessage = (channel, thread, bodyObj, setReturn, setError) => {
+const postMessage = (dir, channel, thread, bodyObj, setReturn, setError) => {
   const item = localStorage.getItem('user');
+
   if (!item) {
     return;
   }
   const user = JSON.parse(item);
   const bearerToken = user ? user.accessToken : '';
-  console.log(thread);
-  const url = thread === undefined ? '/v0/channels/'.concat(channel) :
-    '/v0/channels/' + channel + '?thread=' + thread;
+  const url = dir === 'messages' ?
+    (thread === undefined ? '/v0/channels/'.concat(channel) :
+      '/v0/channels/' + channel + '?thread=' + thread) :
+    (thread === undefined ? '/v0/dm/'.concat(channel) :
+      '/v0/dm/' + channel + '?thread=' + thread);
 
   const fetchInfo = async () => {
     return await fetch(url, {
@@ -147,10 +150,11 @@ function ListMessage(props) {
   return (
     <>
       {props.message.map((message) => {
+        console.log(message);
         return (
           <ListItem
             component={!props.inThread && Link}
-            to={'/messages/' + props.channel + '/' + message.id}
+            to={'/' + props.directory + '/' + props.channel + '/' + message.id}
             // onClick={() => openThread(message)}
             className={props.inThread ?
               classes.threadReply : classes.messageBox
@@ -162,7 +166,7 @@ function ListMessage(props) {
               </Avatar>
             </div>
             <div className={classes.messageUser}>
-              {message.from}
+              {props.inDM ? message.from_user : message.from}
             </div>
             <div className={classes.content}>
               {message.content}
@@ -187,7 +191,7 @@ function Messages(props) {
   const scrollRef = React.useRef();
   const pathnameArray = useLocation().pathname.split('/');
   pathnameArray.splice(0, 1);
-  const [directory, channel, thread] = pathnameArray; // insert , thread]
+  const [directory, channel, thread] = pathnameArray;
   const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [newMessage, sendNewMessage] = React.useState({});
@@ -199,7 +203,12 @@ function Messages(props) {
         fetchMessages(setMessages, setError, channel);
       } else {
         fetchThread(setMessages, setError, channel, thread);
-        console.log(messages);
+      }
+    } else if (directory === 'user') {
+      if (thread === undefined) {
+        fetchDMs(setMessages, setError, channel);
+      } else {
+        fetchDMThread(setMessages, setError, channel, thread);
       }
     }
   }, [directory, channel, thread, messages]);
@@ -216,11 +225,30 @@ function Messages(props) {
         to: channel,
         from: localStorage.getItem('username'),
       };
-      await postMessage(channel, thread, newBody, sendNewMessage, setError);
+      await postMessage(
+        directory,
+        channel,
+        thread,
+        newBody,
+        sendNewMessage,
+        setError,
+      );
+      scrollRef.current.scrollIntoView({behavior: 'smooth'});
+      console.log(newMessage);
+    } else if (directory === 'user') {
+      const newBody = {
+        content: draft,
+      };
+      await postMessage(
+        directory,
+        channel,
+        thread,
+        newBody,
+        sendNewMessage,
+        setError,
+      );
       scrollRef.current.scrollIntoView({behavior: 'smooth'});
     }
-    console.log(newMessage);
-    console.log(draft);
     composeMessage('');
   };
 
@@ -256,8 +284,10 @@ function Messages(props) {
                   <Divider />
                   <ListMessage
                     channel={channel}
+                    directory={directory}
                     message={message.messages}
                     inThread={thread !== undefined}
+                    inDM={directory === 'user'}
                   />
                 </>
               );
