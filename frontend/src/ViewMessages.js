@@ -45,6 +45,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const postMessage = (channel, bodyObj, setReturn, setError) => {
+  const item = localStorage.getItem('user');
+  if (!item) {
+    return;
+  }
+  const user = JSON.parse(item);
+  const bearerToken = user ? user.accessToken : '';
+
+  const fetchInfo = async () => {
+    return await fetch('/v0/channels/'.concat(channel), {
+      method: 'POST',
+      headers: new Headers({
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(bodyObj),
+    });
+  };
+
+  fetchInfo().then((response) => {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
+  })
+    .then((json) => {
+      setError('');
+      setReturn(json);
+      return json;
+    })
+    .catch((error) => {
+      console.log(error);
+      setReturn([]);
+      setError(`${error.status} - ${error.statusText}`);
+    });
+};
+
 /**
  * Single button component for dropdown of channels
  * @param {object} props
@@ -87,6 +124,7 @@ function Messages(props) {
   const location = useLocation().pathname.split('/')[2];
   const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
+  const [newMessage, sendNewMessage] = React.useState({});
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
@@ -97,9 +135,15 @@ function Messages(props) {
     composeMessage(event.target.value);
   };
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
-    console.log('sent message: '.concat(draft));
+    const newBody = {
+      content: draft,
+      to: location,
+      from: localStorage.getItem('username'),
+    };
+    await postMessage(location, newBody, sendNewMessage, setError);
+    console.log(newMessage);
     composeMessage('');
   };
 
