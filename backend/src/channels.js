@@ -41,6 +41,9 @@ exports.sendMessage = async (req, res) => {
 };
 
 function orderMessages(messages) {
+  if (messages.length == 0) {
+    return messages;
+  }
   const sorted = messages.sort((a,b) => new Date(a.sent) - new Date(b.sent));
   const ordered = [];
   let newTime = '';
@@ -88,7 +91,7 @@ function orderMessages(messages) {
 
 exports.getMessage = async (req, res) => {
   try {
-    const messages = await db.getMessage(req.params.channel);
+    const messages = await db.getMessage(req.params.channel, req.query.thread);
     const ordered = orderMessages(messages);
     res.status(200).json(ordered);
   } catch(err) {
