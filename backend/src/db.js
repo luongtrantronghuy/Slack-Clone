@@ -91,13 +91,18 @@ exports.getMessage = async (channel) => {
     const returnArray = [];
     for (row of rows) {
       row.messages.id = row.id;
-      row.messages.thread = [];
+      tempThread = [];
       for (mess of row.thread) {
-        const jsonObj = JSON.parse(mess);
-        row.messages.thread.push(jsonObj);
+        if (mess === ''){
+          tempThread.push({});
+        } else {
+          const jsonObj = JSON.parse(mess);
+          tempThread.push(jsonObj);
+        }
       }
       returnArray.push(row.messages);
     }
+    console.log(returnArray);
     return returnArray;
   } else {
     return undefined;
@@ -196,7 +201,7 @@ exports.selectUser = async (username, currentUser) => {
   }
 };
 
-exports.getWorkspaces = async (access, code) => {
+exports.getWorkspaces = async (access, code, username) => {
   const response = [];
   if (code) {
     const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
@@ -222,6 +227,26 @@ exports.getWorkspaces = async (access, code) => {
     return undefined;
   }
   if (response.length > 0) {
+    for (channel of response[0].channels) {
+      const select = `SELECT users FROM channelAccess WHERE title = '${channel}'`;
+      const query = {
+        text: select,
+      };
+      const {rows} = await pool.query(query);
+      let found = false;
+      for (row of rows[0].users) {
+        if (row === username) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        const index = response[0].channels.indexOf(channel);
+        if (index > -1) {
+          response[0].channels.splice(index, 1);
+        }
+      }
+    }
     return response;
   } else {
     return undefined;
@@ -252,6 +277,33 @@ exports.verifyChannels = async (channelList, username) => {
     } else {
       return undefined;
     }
+  } else {
+    return undefined;
+  }
+};
+
+exports.getDM = async (currUser, user2) => {
+  let select = 'SELECT id, from_user, to_user, content, sent_at, thread FROM dm';
+  select += ` WHERE (from_user='${currUser}' AND to_user='${user2}') OR`;
+  select += ` (from_user='${user2}' AND to_user='${currUser}')`;
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows.length > 0) {
+    for (row of rows) {
+      const tempThread = [];
+      for (mess of row.thread) {
+        if (mess === ''){
+          tempThread.push({});
+        } else {
+          const jsonObj = JSON.parse(mess);
+          tempThread.push(jsonObj);
+        }
+      }
+      row.thread = tempThread;
+    }
+    return rows;
   } else {
     return undefined;
   }
