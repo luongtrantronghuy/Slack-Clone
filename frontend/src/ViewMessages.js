@@ -1,27 +1,21 @@
+/**
+ * Scroll to bottom of page:
+ * https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
+ */
 import React from 'react';
 // import {useParams} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {fetchMessages} from './Fetcher';
-import {Button, Divider, Grid, Typography} from '@material-ui/core';
-import {List, makeStyles, Table} from '@material-ui/core';
-import {TableBody, TableCell, TableRow} from '@material-ui/core';
+import {Divider, ListItem} from '@material-ui/core';
+import {List, makeStyles} from '@material-ui/core';
+import {TableBody, TableRow} from '@material-ui/core';
+import PersonIcon from '@material-ui/icons/Person';
+import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import {useLocation} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexWrap: 'wrap',
-  },
-  hidediv: {
-    borderBottom: 'none',
-  },
-  message: {
-    fontSize: 17,
-    width: '80%',
-    overflowX: 'auto',
-    bottom: 120,
-    position: 'fixed',
-  },
   paper: {
     position: 'absolute',
     height: '100vh',
@@ -33,15 +27,57 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column-reverse',
   },
-  messageBox: {
+  inputField: {
     width: '100%',
+    maxWidth: '1000px',
+  },
+  message: {
+    margin: '0 auto',
+    fontSize: 17,
+    width: '100%',
+    height: '80vh',
+    maxWidth: '1000px',
+    overflowY: 'scroll',
   },
   messageWrapper: {
     display: 'grid',
-    gridTemplateColumns: '80vw',
     justifyContent: 'center',
-    width: '100%',
+    gridTemplateColumns: '100%',
+    margin: '0 auto',
+    width: '90%',
+    maxWidth: '1000px',
     height: 'auto',
+  },
+
+  // classes for chat messages
+  messageBox: {
+    color: 'black',
+    marginTop: '20px',
+    marginBottom: '10px',
+    display: 'grid',
+    gridTemplateColumns: '50px 90%',
+    gridTemplateRows: '25px auto 25px',
+  },
+  messageUser: {
+    marginLeft: '10px',
+    marginTop: '10px',
+    gridRow: 1,
+    gridColumn: 2,
+  },
+  content: {
+    marginLeft: '10px',
+    marginTop: '10px',
+    gridRow: 2,
+    gridColumn: 2,
+  },
+  threadInfo: {
+    marginLeft: '10px',
+    gridColumn: '1 / 3',
+    gridRow: 3,
+  },
+  avatar: {
+    marginLeft: '5px',
+    marginTop: '5px',
   },
 }));
 
@@ -89,25 +125,36 @@ const postMessage = (channel, bodyObj, setReturn, setError) => {
  */
 function ListMessage(props) {
   const classes = useStyles();
+
+  const openThread = (message) => {
+    console.log(message);
+  };
+
   return (
     <>
       {props.message.map((message) => {
         return (
-          <>
-            <TableRow>
-              <TableCell
-                className={classes.hidediv}
-                style={{width: '1%'}}
-              >
-                <Typography>
-                  {message.content}
-                </Typography>
-                <Button>
-                  Thread
-                </Button>
-              </TableCell>
-            </TableRow>
-          </>
+          <ListItem
+            component={Link}
+            to={'/messages/' + props.location + '/' + message.id}
+            onClick={() => openThread(message)}
+            className={classes.messageBox}
+          >
+            <div className={classes.avatar}>
+              <Avatar className={classes.avatar}>
+                <PersonIcon />
+              </Avatar>
+            </div>
+            <div className={classes.messageUser}>
+              User
+            </div>
+            <div className={classes.content}>
+              {message.content}
+            </div>
+            <div className={classes.threadInfo}>
+              Thread
+            </div>
+          </ListItem>
         );
       })}
     </>
@@ -121,15 +168,21 @@ function ListMessage(props) {
  */
 function Messages(props) {
   const classes = useStyles();
-  const location = useLocation().pathname.split('/')[2];
+  const scrollRef = React.useRef();
+  const pathnameArray = useLocation().pathname.split('/');
+  const directory = pathnameArray[1];
+  const location = pathnameArray[2];
   const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [newMessage, sendNewMessage] = React.useState({});
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
-    fetchMessages(setMessages, setError, location);
-  }, [location]);
+    if (directory === 'messages') {
+      fetchMessages(setMessages, setError, location);
+    }
+    scrollRef.current.scrollIntoView({behavior: 'smooth'});
+  }, [location, directory]);
 
   const changeHandler = (event) => {
     composeMessage(event.target.value);
@@ -137,42 +190,21 @@ function Messages(props) {
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    const newBody = {
-      content: draft,
-      to: location,
-      from: localStorage.getItem('username'),
-    };
-    await postMessage(location, newBody, sendNewMessage, setError);
+    if (directory === 'messages') {
+      const newBody = {
+        content: draft,
+        to: location,
+        from: localStorage.getItem('username'),
+      };
+      await postMessage(location, newBody, sendNewMessage, setError);
+    }
     console.log(newMessage);
+    console.log(draft);
     composeMessage('');
   };
 
   return (
     <>
-      <Grid
-        container
-        direction='rows'
-        justifyContent='center'
-        alignItems='center'
-      >
-        <Table className={classes.message}>
-          <List>
-            <TableBody >
-              {messages.map((message) => {
-                return (
-                  <>
-                    <TableRow >
-                      {message.time}
-                    </TableRow>
-                    <Divider />
-                    <ListMessage message={message.messages}/>
-                  </>
-                );
-              })}
-            </TableBody>
-          </List>
-        </Table>
-      </Grid>
       <div className={classes.paper}>
         <div key={error}>{}</div>
         <Toolbar />
@@ -183,12 +215,28 @@ function Messages(props) {
               placeholder='send msg'
               variant='outlined'
               color='primary'
-              className={classes.messageBox}
+              className={classes.inputField}
               onChange={changeHandler}
               value={draft}
             />
           </form>
         </div>
+        <List className={classes.message}>
+          <TableBody >
+            {messages.map((message) => {
+              return (
+                <>
+                  <TableRow >
+                    {message.time}
+                  </TableRow>
+                  <Divider />
+                  <ListMessage location={location} message={message.messages}/>
+                </>
+              );
+            })}
+          </TableBody>
+          <div ref={scrollRef} />
+        </List>
       </div>
     </>
   );

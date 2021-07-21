@@ -143,7 +143,7 @@ function Account(props) {
   }, [username]);
 
   return (
-    <React.Fragment>
+    <>
       <div>{error}</div>
       <UserCard name={userInfo[0].name} />
       <StatusBar />
@@ -161,7 +161,7 @@ function Account(props) {
       >
         Sign out
       </Button>
-    </React.Fragment>
+    </>
   );
 }
 

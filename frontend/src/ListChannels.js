@@ -41,7 +41,7 @@ function ChannelsList(props) {
   }, [workspace]);
 
   return (
-    <React.Fragment>
+    <>
       {channels[0].channels && channels[0].channels.map((channel) =>
         <ChannelListItem
           nested={props.nested}
@@ -49,7 +49,7 @@ function ChannelsList(props) {
           link={'/messages/'.concat(channel)}
         />,
       )}
-    </React.Fragment>
+    </>
   );
 }
 

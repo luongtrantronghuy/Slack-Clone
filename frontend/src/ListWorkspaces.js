@@ -45,12 +45,12 @@ function WorkspaceList(props) {
   }, [username]);
 
   return (
-    <React.Fragment>
+    <>
       {userInfo[0].access.map((code) => (
         <WorkspaceListItem name={code} />
       ))}
       <ListItem key={'WRKSPC-ERR'}>{error}</ListItem>
-    </React.Fragment>
+    </>
   );
 }
 
