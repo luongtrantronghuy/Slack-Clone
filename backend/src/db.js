@@ -91,17 +91,18 @@ exports.getMessage = async (channel) => {
     const returnArray = [];
     for (row of rows) {
       row.messages.id = row.id;
-      row.messages.thread = [];
+      tempThread = [];
       for (mess of row.thread) {
         if (mess === ''){
-          row.messages.thread.push({});
+          tempThread.push({});
         } else {
           const jsonObj = JSON.parse(mess);
-          row.messages.thread.push(jsonObj);
+          tempThread.push(jsonObj);
         }
       }
       returnArray.push(row.messages);
     }
+    console.log(returnArray);
     return returnArray;
   } else {
     return undefined;
@@ -276,6 +277,33 @@ exports.verifyChannels = async (channelList, username) => {
     } else {
       return undefined;
     }
+  } else {
+    return undefined;
+  }
+};
+
+exports.getDM = async (currUser, user2) => {
+  let select = 'SELECT id, from_user, to_user, content, sent_at, thread FROM dm';
+  select += ` WHERE (from_user='${currUser}' AND to_user='${user2}') OR`;
+  select += ` (from_user='${user2}' AND to_user='${currUser}')`;
+  const query = {
+    text: select,
+  };
+  const {rows} = await pool.query(query);
+  if (rows.length > 0) {
+    for (row of rows) {
+      const tempThread = [];
+      for (mess of row.thread) {
+        if (mess === ''){
+          tempThread.push({});
+        } else {
+          const jsonObj = JSON.parse(mess);
+          tempThread.push(jsonObj);
+        }
+      }
+      row.thread = tempThread;
+    }
+    return rows;
   } else {
     return undefined;
   }
