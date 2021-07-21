@@ -77,11 +77,11 @@ function Users(props) {
   }, [username]);
 
   return (
-    <React.Fragment>
+    <>
       <UserListItem
         nested={props.nested}
-        name={userInfo[0].name}
-        link={'/user/'.concat(userInfo[0].name).concat(' (You)')}
+        name={userInfo[0].name.concat(' (You)')}
+        link={'/user/'.concat(userInfo[0].name)}
       />
       {userList.map((user) =>
         <UserListItem
@@ -91,7 +91,7 @@ function Users(props) {
         />,
       )}
       <ListItem key={'CHAN-ERR'}>{error}</ListItem>
-    </React.Fragment>
+    </>
   );
 }
 

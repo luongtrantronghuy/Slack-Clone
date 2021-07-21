@@ -34,6 +34,11 @@ const fetchAPI = (url, setReturn, setError, defaultReturn) => {
     });
 };
 
+exports.fetchMessages = async (setMessages, setError, directory) => {
+  const url = '/v0/channels/'.concat(directory);
+  await fetchAPI(url, setMessages, setError, []);
+};
+
 exports.fetchWorkspaces = async (name, setChannels) => {
   const setError = () => {};
 

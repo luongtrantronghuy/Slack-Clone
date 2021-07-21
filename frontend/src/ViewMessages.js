@@ -1,57 +1,21 @@
+/**
+ * Scroll to bottom of page:
+ * https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
+ */
 import React from 'react';
 // import {useParams} from 'react-router-dom';
-import {Button, Divider, Grid, Typography} from '@material-ui/core';
-import {List, makeStyles, Table} from '@material-ui/core';
-import {TableBody, TableCell, TableRow} from '@material-ui/core';
+import {Link} from 'react-router-dom';
+import {fetchMessages} from './Fetcher';
+import {Divider, ListItem} from '@material-ui/core';
+import {List, makeStyles} from '@material-ui/core';
+import {TableBody, TableRow} from '@material-ui/core';
+import PersonIcon from '@material-ui/icons/Person';
+import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import {useLocation} from 'react-router-dom';
 
-const fetchMessages = (setMessages, setError, directory) => {
-  const item = localStorage.getItem('user');
-  if (!item) {
-    return;
-  }
-  const user = JSON.parse(item);
-  const bearerToken = user ? user.accessToken : '';
-  fetch('/v0/channels/'+directory, {
-    method: 'GET',
-    headers: new Headers({
-      'Authorization': `Bearer ${bearerToken}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw response;
-      }
-      return response.json();
-    })
-    .then((json) => {
-      setError('');
-      setMessages(json);
-    })
-    .catch((error) => {
-      console.log(error);
-      setMessages([]);
-      setError(`${error.status} - ${error.statusText}`);
-    });
-};
-
 const useStyles = makeStyles((theme) => ({
-  root: {
-    flexWrap: 'wrap',
-  },
-  hidediv: {
-    borderBottom: 'none',
-  },
-  message: {
-    fontSize: 17,
-    width: '80%',
-    overflowX: 'auto',
-    bottom: 120,
-    position: 'fixed',
-  },
   paper: {
     position: 'absolute',
     height: '100vh',
@@ -63,17 +27,96 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column-reverse',
   },
-  messageBox: {
+  inputField: {
     width: '100%',
+    maxWidth: '1000px',
+  },
+  message: {
+    margin: '0 auto',
+    fontSize: 17,
+    width: '100%',
+    height: '80vh',
+    maxWidth: '1000px',
+    overflowY: 'scroll',
   },
   messageWrapper: {
     display: 'grid',
-    gridTemplateColumns: '80vw',
     justifyContent: 'center',
-    width: '100%',
+    gridTemplateColumns: '100%',
+    margin: '0 auto',
+    width: '90%',
+    maxWidth: '1000px',
     height: 'auto',
   },
+
+  // classes for chat messages
+  messageBox: {
+    color: 'black',
+    marginTop: '20px',
+    marginBottom: '10px',
+    display: 'grid',
+    gridTemplateColumns: '50px 90%',
+    gridTemplateRows: '25px auto 25px',
+  },
+  messageUser: {
+    marginLeft: '10px',
+    marginTop: '10px',
+    gridRow: 1,
+    gridColumn: 2,
+  },
+  content: {
+    marginLeft: '10px',
+    marginTop: '10px',
+    gridRow: 2,
+    gridColumn: 2,
+  },
+  threadInfo: {
+    marginLeft: '10px',
+    gridColumn: '1 / 3',
+    gridRow: 3,
+  },
+  avatar: {
+    marginLeft: '5px',
+    marginTop: '5px',
+  },
 }));
+
+const postMessage = (channel, bodyObj, setReturn, setError) => {
+  const item = localStorage.getItem('user');
+  if (!item) {
+    return;
+  }
+  const user = JSON.parse(item);
+  const bearerToken = user ? user.accessToken : '';
+
+  const fetchInfo = async () => {
+    return await fetch('/v0/channels/'.concat(channel), {
+      method: 'POST',
+      headers: new Headers({
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(bodyObj),
+    });
+  };
+
+  fetchInfo().then((response) => {
+    if (!response.ok) {
+      throw response;
+    }
+    return response.json();
+  })
+    .then((json) => {
+      setError('');
+      setReturn(json);
+      return json;
+    })
+    .catch((error) => {
+      console.log(error);
+      setReturn([]);
+      setError(`${error.status} - ${error.statusText}`);
+    });
+};
 
 /**
  * Single button component for dropdown of channels
@@ -82,25 +125,36 @@ const useStyles = makeStyles((theme) => ({
  */
 function ListMessage(props) {
   const classes = useStyles();
+
+  const openThread = (message) => {
+    console.log(message);
+  };
+
   return (
     <>
       {props.message.map((message) => {
         return (
-          <>
-            <TableRow>
-              <TableCell
-                className={classes.hidediv}
-                style={{width: '1%'}}
-              >
-                <Typography>
-                  {message.content}
-                </Typography>
-                <Button>
-                  Thread
-                </Button>
-              </TableCell>
-            </TableRow>
-          </>
+          <ListItem
+            component={Link}
+            to={'/messages/' + props.location + '/' + message.id}
+            onClick={() => openThread(message)}
+            className={classes.messageBox}
+          >
+            <div className={classes.avatar}>
+              <Avatar className={classes.avatar}>
+                <PersonIcon />
+              </Avatar>
+            </div>
+            <div className={classes.messageUser}>
+              User
+            </div>
+            <div className={classes.content}>
+              {message.content}
+            </div>
+            <div className={classes.threadInfo}>
+              Thread
+            </div>
+          </ListItem>
         );
       })}
     </>
@@ -114,63 +168,75 @@ function ListMessage(props) {
  */
 function Messages(props) {
   const classes = useStyles();
-  // grab channel name if we're in one
-  const location = useLocation();
+  const scrollRef = React.useRef();
+  const pathnameArray = useLocation().pathname.split('/');
+  const directory = pathnameArray[1];
+  const location = pathnameArray[2];
+  const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
+  const [newMessage, sendNewMessage] = React.useState({});
   const [error, setError] = React.useState([]);
 
-  let directory = 'Workspace 1'; // defaults to current workspace
-  if (location.pathname !== '/') {
-    const pathArray = location.pathname.split('/');
-    if (pathArray[1] === 'messages' || pathArray[1] === 'direct-messages') {
-      directory = pathArray[2];
-    } else if (pathArray[1] === 'account') {
-      directory = '';
-    }
-  }
-
   React.useEffect(() => {
-    fetchMessages(setMessages, setError, directory);
-  }, [directory]);
+    if (directory === 'messages') {
+      fetchMessages(setMessages, setError, location);
+    }
+    scrollRef.current.scrollIntoView({behavior: 'smooth'});
+  }, [location, directory]);
 
-  console.log(messages); // print out the message in console for testing
+  const changeHandler = (event) => {
+    composeMessage(event.target.value);
+  };
+
+  const submitHandler = async (event) => {
+    event.preventDefault();
+    if (directory === 'messages') {
+      const newBody = {
+        content: draft,
+        to: location,
+        from: localStorage.getItem('username'),
+      };
+      await postMessage(location, newBody, sendNewMessage, setError);
+    }
+    console.log(newMessage);
+    console.log(draft);
+    composeMessage('');
+  };
 
   return (
     <>
-      <Grid
-        container
-        direction='rows'
-        justifyContent='center'
-        alignItems='center'
-      >
-        <Table className={classes.message}>
-          <List>
-            <TableBody >
-              {messages.map((message) => {
-                return (
-                  <>
-                    <TableRow >
-                      {message.time}
-                    </TableRow>
-                    <Divider />
-                    <ListMessage message={message.messages}/>
-                  </>
-                );
-              })}
-            </TableBody>
-          </List>
-        </Table>
-      </Grid>
       <div className={classes.paper}>
         <div key={error}>{}</div>
         <Toolbar />
         <div className={classes.messageWrapper}>
-          <form noValidate autoComplete="off">
-            <TextField id='compose-msg' placeholder='send msg'
+          <form noValidate autoComplete="off" onSubmit={submitHandler}>
+            <TextField
+              id='compose-msg'
+              placeholder='send msg'
               variant='outlined'
-              color='primary' className={classes.messageBox} />
+              color='primary'
+              className={classes.inputField}
+              onChange={changeHandler}
+              value={draft}
+            />
           </form>
         </div>
+        <List className={classes.message}>
+          <TableBody >
+            {messages.map((message) => {
+              return (
+                <>
+                  <TableRow >
+                    {message.time}
+                  </TableRow>
+                  <Divider />
+                  <ListMessage location={location} message={message.messages}/>
+                </>
+              );
+            })}
+          </TableBody>
+          <div ref={scrollRef} />
+        </List>
       </div>
     </>
   );

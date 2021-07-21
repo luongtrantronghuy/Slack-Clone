@@ -45,14 +45,18 @@ function TopBar(props) {
   if (location.pathname !== '/') {
     const pathArray = location.pathname.split('/');
     if (pathArray[1] === 'messages' || pathArray[1] === 'user') {
-      directory = pathArray[2];
+      if (pathArray[3]) {
+        directory = 'Thread';
+      } else {
+        directory = pathArray[2];
+      }
     } else if (pathArray[1] === 'account') {
       directory = '';
     }
   }
 
   return (
-    <React.Fragment>
+    <>
       { // back button
         location.pathname !== '/' &&
         <Fab color='inherit' style={butBack} onClick={() => history.goBack()}>
@@ -72,7 +76,7 @@ function TopBar(props) {
           <ExpandMoreIcon color='primary' fontSize='small'/>
         </Fab>
       }
-    </React.Fragment>
+    </>
   );
 }
 

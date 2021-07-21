@@ -57,15 +57,13 @@ function App() {
     fetchUserInfo(setUserInfo, setError, username);
   }, [username]);
 
-  if (error.len > 0) console.log(error);
-
   return (
     <div className='root'>
       <Router>
         <CssBaseline />
         <ThemeProvider theme={theme}>
           {
-            loggedIn ?
+            loggedIn && !error ?
               <Main workspace={userInfo[0].access[0]} setLogin={setLogin} /> :
               <Login setLogin={setLogin} />
           }

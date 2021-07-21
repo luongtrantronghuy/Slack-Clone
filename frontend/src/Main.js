@@ -4,6 +4,7 @@ import Account from './ViewAccount.js';
 import BottomBar from './BottomBar.js';
 import Home from './ViewHome.js';
 import Messages from './ViewMessages.js';
+import Thread from './ViewThread.js';
 import TopBar from './TopBar.js';
 import WorkspaceList from './ListWorkspaces';
 import {makeStyles} from '@material-ui/core/styles';
@@ -42,7 +43,7 @@ function Main(props) {
   };
 
   return (
-    <React.Fragment>
+    <>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <TopBar ddOpen={dropdownOpen} toggleDd={toggleDropdown} />
@@ -70,6 +71,9 @@ function Main(props) {
           <Route exact path='/'>
             <Home />
           </Route>
+          <Route path='/messages/:name/:thread'>
+            <Thread />
+          </Route>
           <Route path='/messages/:name'>
             <Messages />
           </Route>
@@ -83,7 +87,7 @@ function Main(props) {
         <Toolbar />
       </main>
       <BottomBar />
-    </React.Fragment>
+    </>
   );
 }
 
