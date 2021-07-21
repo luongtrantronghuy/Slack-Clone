@@ -34,10 +34,11 @@ function ChannelListItem(props) {
  */
 function ChannelsList(props) {
   const [channels, setChannels] = React.useState([{channels: null}]);
+  const workspace = localStorage.getItem('workspace');
 
   React.useEffect(() => {
-    fetchWorkspaces(props.workspace, setChannels);
-  }, [props.workspace]);
+    fetchWorkspaces(workspace, setChannels);
+  }, [workspace]);
 
   return (
     <React.Fragment>

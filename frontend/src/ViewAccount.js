@@ -77,13 +77,13 @@
    },
  }));
 
- /**
-  * Creates the user status card for the user
-  * @param {object} props
-  * @return {object} JSX
-  */
- function UserCard(props) {
-   const classes = useStyles();
+/**
+* Creates the user status card for the user
+* @param {object} props
+* @return {object} JSX
+*/
+function UserCard(props) {
+  const classes = useStyles();
 
    return (
      <div className={classes.box}>
@@ -107,13 +107,13 @@
    );
  }
 
- /**
-  * The text field to update user status
-  * @param {object} props
-  * @return {object} JSX
-  */
- function StatusBar(props) {
-   const classes = useStyles();
+/**
+* The text field to update user status
+* @param {object} props
+* @return {object} JSX
+*/
+function StatusBar(props) {
+  const classes = useStyles();
 
    return (
      <form noValidate autoComplete="off">
@@ -123,42 +123,46 @@
    );
  }
 
- /**
-  * Returns the view for user account
-  * @param {object} props
-  * @return {object} JSX
-  */
- function Account(props) {
-   const classes = useStyles();
-   const username = localStorage.getItem('username');
-   const [userInfo, setUserInfo] = React.useState([{name: ''}]);
-   const [error, setError] = React.useState([]);
+const logout = () => {
+  localStorage.removeItem('user');
+};
+
+/**
+* Returns the view for user account
+* @param {object} props
+* @return {object} JSX
+*/
+function Account(props) {
+  const classes = useStyles();
+  const username = localStorage.getItem('username');
+  const [userInfo, setUserInfo] = React.useState([{name: ''}]);
+  const [error, setError] = React.useState([]);
 
    React.useEffect(() => {
      fetchUserInfo(setUserInfo, setError, username);
    }, [username]);
 
-   return (
-     <React.Fragment>
-       <div>{error}</div>
-       <UserCard name={userInfo[0].name} />
-       <StatusBar />
-       <Button disableRipple className={classes.endButton}>
-         Set yourself as AWAY
-       </Button>
-       <Divider />
-       <Button
-         disableRipple
-         className={classes.endButton}
-         onClick={() => {
-           localStorage.removeItem('user');
-           props.setLogin(false);
-         }}
-       >
-         Sign out
-       </Button>
-     </React.Fragment>
-   );
- }
+  return (
+    <React.Fragment>
+      <div>{error}</div>
+      <UserCard name={userInfo[0].name} />
+      <StatusBar />
+      <Button disableRipple className={classes.endButton}>
+        Set yourself as AWAY
+      </Button>
+      <Divider />
+      <Button
+        disableRipple
+        className={classes.endButton}
+        onClick={() => {
+          logout();
+          props.setLogin(false);
+        }}
+      >
+        Sign out
+      </Button>
+    </React.Fragment>
+  );
+}
 
  export default Account;
