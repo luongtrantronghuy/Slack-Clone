@@ -1,6 +1,9 @@
 const db = require('./db');
 
 function orderMessages(messages) {
+  if (messages.length == 0) {
+    return messages;
+  }
   const sorted = messages.sort((a,b) => new Date(a.sent) - new Date(b.sent));
   const ordered = [];
   let newTime = '';
@@ -48,10 +51,19 @@ function orderMessages(messages) {
 
 exports.getDM = async (req, res) => {
   try {
-    const messages = await db.getDM(req.user.username, req.params.username);
+    const messages = await db.getDM(req.user.username, req.params.username, req.query.thread);
     const ordered = orderMessages(messages);
     res.status(200).json(ordered);
   } catch(err) {
     res.status(404).send();
+  }
+};
+
+exports.sendDM = async (req, res) => {
+  try{
+    const message = await db.sendDM(req.user.username, req.params.username, req.body, req.query.thread);
+    res.status(201).json(message);
+  } catch(err) {
+    res.status(400).send();
   }
 };
