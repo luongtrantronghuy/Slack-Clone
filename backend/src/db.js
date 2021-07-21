@@ -93,8 +93,12 @@ exports.getMessage = async (channel) => {
       row.messages.id = row.id;
       row.messages.thread = [];
       for (mess of row.thread) {
-        const jsonObj = JSON.parse(mess);
-        row.messages.thread.push(jsonObj);
+        if (mess === ''){
+          row.messages.thread.push({});
+        } else {
+          const jsonObj = JSON.parse(mess);
+          row.messages.thread.push(jsonObj);
+        }
       }
       returnArray.push(row.messages);
     }
@@ -196,7 +200,7 @@ exports.selectUser = async (username, currentUser) => {
   }
 };
 
-exports.getWorkspaces = async (access, code) => {
+exports.getWorkspaces = async (access, code, username) => {
   const response = [];
   if (code) {
     const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
@@ -222,6 +226,26 @@ exports.getWorkspaces = async (access, code) => {
     return undefined;
   }
   if (response.length > 0) {
+    for (channel of response[0].channels) {
+      const select = `SELECT users FROM channelAccess WHERE title = '${channel}'`;
+      const query = {
+        text: select,
+      };
+      const {rows} = await pool.query(query);
+      let found = false;
+      for (row of rows[0].users) {
+        if (row === username) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        const index = response[0].channels.indexOf(channel);
+        if (index > -1) {
+          response[0].channels.splice(index, 1);
+        }
+      }
+    }
     return response;
   } else {
     return undefined;
