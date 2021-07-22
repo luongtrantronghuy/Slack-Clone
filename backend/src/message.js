@@ -105,6 +105,12 @@ exports.findMessage = async (req, res) => {
     const foundDM = searchContent(allDM, req.query.content);
     // Reorder the found messages
     const resultDM = orderMessages(foundDM, req.user.username);
+    if (resultDM.length > 0) {
+      for (user of resultDM) {
+        const name = await db.selectUser(user.in, undefined);
+        user.in = name[0].name;
+      }
+    }
     const resultChannel = orderMessages(foundChannel, req.user.username);
     const resultArray = resultChannel.concat(resultDM);
     res.status(200).json(resultArray);

@@ -166,6 +166,7 @@ exports.sendNewMessage = async (body, channel, thread) => {
         return undefined;
       }
     } else { // if thread id not set. new message is for channel
+      body.to = channel;
       const newId = createUUID();
       const insert = `INSERT INTO channels(id, channel, messages, thread)
           VALUES ($1, $2, $3, $4)`;
