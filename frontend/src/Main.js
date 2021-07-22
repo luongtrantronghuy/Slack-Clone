@@ -14,6 +14,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Toolbar from '@material-ui/core/Toolbar';
+import {Typography} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,6 +68,7 @@ function Main(props) {
           </List>
         </div>
       </Drawer>
+      <Typography>Hello</Typography>
       <main className={classes.main}>
         <Toolbar />
         <Switch>
