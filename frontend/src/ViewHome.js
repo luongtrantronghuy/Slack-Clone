@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
  */
 function Home(props) {
   const classes = useStyles();
-  const username = localStorage.getItem('username');
   const [channelsOpen, setChannels] = React.useState(true);
   const [dmsOpen, setDms] = React.useState(true);
 
@@ -62,11 +61,7 @@ function Home(props) {
         </ListItem>
         <Collapse in={channelsOpen}>
           <List>
-            <ChannelsList
-              nested={classes.nested}
-              username={username}
-              workspace={props.workspace}
-            />
+            <ChannelsList nested={classes.nested} />
             <ListItem button className={classes.nested}>
               <ListItemIcon><AddBoxIcon /></ListItemIcon>
               <ListItemText primary='Add new channel' />

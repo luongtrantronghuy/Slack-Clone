@@ -34,15 +34,18 @@ function BottomBar(props) {
           icon={<HomeIcon fontSize='large' />}
         />
         <BottomNavigationAction
-          value='HOME'
+          component={Link}
+          to='/dms'
           icon={<MessageIcon fontSize='large' />}
         />
         <BottomNavigationAction
-          value='HOME'
+          component={Link}
+          to='/mentions'
           icon={<AlternateEmailIcon fontSize='large' />}
         />
         <BottomNavigationAction
-          value='HOME'
+          component={Link}
+          to='/search'
           icon={<SearchIcon fontSize='large' />}
         />
         <BottomNavigationAction

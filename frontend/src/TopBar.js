@@ -37,39 +37,64 @@ const butUp = Object.assign(
  */
 function TopBar(props) {
   const classes = useStyles();
-  const location = useLocation();
   const history = useHistory();
+  const pathname = useLocation().pathname; // '/messages/yada yada
+  const pathArray = pathname.split('/');
+  pathArray.splice(0, 1);
+  const [location, chann, thread] = pathArray; // /messages <-
 
   // grab channel name if we're in one
-  let directory = localStorage.getItem('workspace'); // default to workspace
-  if (location.pathname !== '/') {
-    const pathArray = location.pathname.split('/');
-    if (pathArray[1] === 'messages' || pathArray[1] === 'user') {
-      if (pathArray[3]) {
-        directory = 'Thread ' + pathArray[2];
-      } else {
-        directory = pathArray[2];
+  const getDirectory = () => {
+    if (pathname !== '/') {
+      switch (location) {
+      case 'messages':
+        if (thread) return 'Thread ' + chann;
+        return chann;
+      case 'user':
+        if (thread) return 'Thread ' + chann;
+        return chann;
+      case 'dms':
+        return 'Direct Messages';
+      case 'mentions':
+        return 'Mentions';
+      case 'search':
+        return 'Search';
+      default:
+        return '';
       }
-    } else if (pathArray[1] === 'account') {
-      directory = '';
     }
-  } else {
+    return localStorage.getItem('workspace');
+  };
 
-  }
+
+  // if (location.pathname !== '/') {
+  //   const pathArray = location.pathname.split('/');
+  //   if (pathArray[1] === 'messages' || pathArray[1] === 'user') {
+  //     if (pathArray[3]) {
+  //       directory = 'Thread ' + pathArray[2];
+  //     } else {
+  //       directory = pathArray[2];
+  //     }
+  //   } else if (pathArray[1] === 'account') {
+  //     directory = '';
+  //   }
+  // } else {
+
+  // }
 
   return (
     <>
       { // back button
-        location.pathname !== '/' &&
+        pathname !== '/' &&
         <Fab color='inherit' style={butBack} onClick={() => history.goBack()}>
           <ExpandMoreIcon color='primary' fontSize='small'/>
         </Fab>
       }
       <Typography variant="h6" className={classes.title}>
-        {directory}
+        {getDirectory()}
       </Typography>
       { // workspace chooser
-        location.pathname === '/' &&
+        pathname === '/' &&
         <Fab
           color='inherit'
           style={(props.ddOpen) ? butUp : but}
