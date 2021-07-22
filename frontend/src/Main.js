@@ -67,22 +67,12 @@ function Main(props) {
       <main className={classes.main}>
         <Toolbar />
         <Switch>
-          <Route exact path='/'>
-            <Home />
-          </Route>
-          <Route path='/messages/:name/:thread'>
-            <Messages />
-          </Route>
-          <Route path='/messages/:name'>
-            <Messages />
-          </Route>
-          <Route path='/user/:user'>
-            <Messages />
-          </Route>
-          <Route path='/user/:user/:thread'>
-            <Messages />
-          </Route>
-          <Route path='/account'>
+          <Route exact path='/' component={Home} />
+          <Route path='/messages/:channel/:thread' component={Messages} />
+          <Route exact path='/messages/:channel' component={Messages} />
+          <Route exact path='/user/:user' component={Messages} />
+          <Route path='/user/:user/:thread' component={Messages} />
+          <Route exact path='/account'>
             <Account setLogin={setLogin} />
           </Route>
         </Switch>

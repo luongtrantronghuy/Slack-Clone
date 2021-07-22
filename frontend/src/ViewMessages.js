@@ -3,7 +3,7 @@
  * https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
  */
 import React from 'react';
-// import {useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {Link} from 'react-router-dom';
 import {fetchMessages, fetchThread, fetchDMs, fetchDMThread} from './Fetcher';
 import {Divider, ListItem} from '@material-ui/core';
@@ -13,7 +13,6 @@ import PersonIcon from '@material-ui/icons/Person';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
-import {useLocation} from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -92,18 +91,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const postMessage = (dir, channel, thread, bodyObj, setReturn, setError) => {
+const postMessage = async (dir, channel, thread, bodyObj,
+  setReturn, setError) => {
   const item = localStorage.getItem('user');
-
   if (!item) {
     return;
   }
   const user = JSON.parse(item);
   const bearerToken = user ? user.accessToken : '';
   const url = dir === 'messages' ?
-    (thread === undefined ? '/v0/channels/'.concat(channel) :
+    (thread === undefined ? '/v0/channels/' + channel:
       '/v0/channels/' + channel + '?thread=' + thread) :
-    (thread === undefined ? '/v0/dm/'.concat(channel) :
+    (thread === undefined ? '/v0/dm/' + channel :
       '/v0/dm/' + channel + '?thread=' + thread);
 
   const fetchInfo = async () => {
@@ -117,22 +116,20 @@ const postMessage = (dir, channel, thread, bodyObj, setReturn, setError) => {
     });
   };
 
-  fetchInfo().then((response) => {
+  try {
+    const response = await fetchInfo();
     if (!response.ok) {
       throw response;
     }
-    return response.json();
-  })
-    .then((json) => {
-      setError('');
-      setReturn(json);
-      return json;
-    })
-    .catch((error) => {
-      console.log(error);
-      setReturn([]);
-      setError(`${error.status} - ${error.statusText}`);
-    });
+    const json = response.json;
+    setError('');
+    setReturn(json);
+    return json;
+  } catch (error) {
+    console.log(error);
+    setReturn([]);
+    setError(`${error.status} - ${error.statusText}`);
+  };
 };
 
 /**
@@ -143,22 +140,17 @@ const postMessage = (dir, channel, thread, bodyObj, setReturn, setError) => {
 function ListMessage(props) {
   const classes = useStyles();
 
-  const openThread = (message) => {
-    props.setOrigMessage({
-      content: message.content,
-      from: props.inDM? message.from_user : message.from,
-    });
-  };
-
   return (
     <>
-      {props.message.map((message) => {
-        console.log(message);
+      {props.messages.map((message) => {
+        if (props.threadException && message.id !== props.threadException) {
+          return <div />;
+        }
+
         return (
           <ListItem
-            component={!props.inThread && Link}
+            component={!props.inThread && !props.threadException && Link}
             to={'/' + props.directory + '/' + props.channel + '/' + message.id}
-            onClick={() => !props.inThread && openThread(message)}
             className={props.inThread ?
               classes.threadReply : classes.messageBox
             }
@@ -169,13 +161,13 @@ function ListMessage(props) {
               </Avatar>
             </div>
             <div className={classes.messageUser}>
-              {props.inDM ? message.from_user : message.from}
+              {message[props.from]}
             </div>
             <div className={classes.content}>
               {message.content}
             </div>
             {
-              !props.inThread &&
+              !props.inThread && !props.threadException &&
               <div className={classes.threadInfo}>
                 Thread
               </div>
@@ -195,68 +187,68 @@ function ListMessage(props) {
 function Messages(props) {
   const classes = useStyles();
   const scrollRef = React.useRef();
-  const pathnameArray = useLocation().pathname.split('/');
-  pathnameArray.splice(0, 1);
-  const [directory, channel, thread] = pathnameArray;
-  const [draft, composeMessage] = React.useState('');
-  const [messages, setMessages] = React.useState([]);
-  const [newMessage, sendNewMessage] = React.useState({});
-  const [origMessage, setOrigMessage] = React.useState({content: '', from: ''});
+  const {channel, user, thread} = useParams();
+  const [messages, setMessages] = React.useState([]); // channels or dms
+  const [threadMessages, setThreadMessages] = React.useState([]);
+  const [textMessage, composeTextMessage] = React.useState('');
   const [error, setError] = React.useState([]);
 
-  React.useEffect(() => {
-    if (directory === 'messages') {
-      if (thread === undefined) {
-        fetchMessages(setMessages, setError, channel);
-      } else {
-        fetchThread(setMessages, setError, channel, thread);
+  // const [draft, composeMessage] = React.useState('');
+  // const [messages, setMessages] = React.useState([]);
+
+  const fetchDependencies = async () => {
+    if (channel) {
+      await fetchMessages(setMessages, setError, channel);
+      if (thread) {
+        await fetchThread(setThreadMessages, setError, channel, thread);
       }
-    } else if (directory === 'user') {
-      if (thread === undefined) {
-        fetchDMs(setMessages, setError, channel);
-      } else {
-        fetchDMThread(setMessages, setError, channel, thread);
+    } else if (user) {
+      await fetchDMs(setMessages, setError, user);
+      if (thread) {
+        await fetchDMThread(setThreadMessages, setError, user, thread);
       }
     }
-  }, [directory, channel, thread, messages]);
+  };
+
+  React.useEffect(() => {
+    if (channel) {
+      fetchMessages(setMessages, setError, channel)
+        .then(() => {
+          if (thread) {
+            fetchThread(setThreadMessages, setError, channel, thread);
+          }
+        })
+        .catch((err) => console.log(err));
+    } else if (user) {
+      fetchDMs(setMessages, setError, user)
+        .then(() => {
+          if (thread) {
+            fetchDMThread(setThreadMessages, setError, user, thread);
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [channel, thread, user]);
 
   const changeHandler = (event) => {
-    composeMessage(event.target.value);
+    composeTextMessage(event.target.value);
   };
 
   const submitHandler = async (event) => {
     event.preventDefault();
-    if (directory === 'messages') {
-      const newBody = {
-        content: draft,
-        to: channel,
-        from: localStorage.getItem('username'),
-      };
-      await postMessage(
-        directory,
-        channel,
-        thread,
-        newBody,
-        sendNewMessage,
-        setError,
-      );
-      scrollRef.current.scrollIntoView({behavior: 'smooth'});
-      console.log(newMessage);
-    } else if (directory === 'user') {
-      const newBody = {
-        content: draft,
-      };
-      await postMessage(
-        directory,
-        channel,
-        thread,
-        newBody,
-        sendNewMessage,
-        setError,
-      );
-      scrollRef.current.scrollIntoView({behavior: 'smooth'});
-    }
-    composeMessage('');
+    const directory = channel ? 'messages' : 'user';
+    const username = localStorage.getItem('username');
+    await postMessage(
+      directory,
+      channel || user,
+      thread,
+      {content: textMessage, from: username, from_user: username},
+      () => {},
+      setError,
+    );
+    composeTextMessage(''); // clear input
+    await fetchDependencies(); // refresh messages
+    scrollRef.current.scrollIntoView({behavior: 'smooth'});
   };
 
   return (
@@ -267,7 +259,7 @@ function Messages(props) {
         <div className={classes.messageWrapper}>
           <form noValidate autoComplete="off" onSubmit={submitHandler}>
             <TextField
-              value={draft}
+              value={textMessage}
               color='primary'
               id='compose-msg'
               variant='outlined'
@@ -279,41 +271,34 @@ function Messages(props) {
         </div>
         <List className={classes.message}>
           <TableBody >
-            {
-              thread !== undefined &&
-              <ListItem className={classes.messageBox} >
-                <div className={classes.avatar}>
-                  <Avatar className={classes.avatar}>
-                    <PersonIcon />
-                  </Avatar>
-                </div>
-                <div className={classes.messageUser}>
-                  {origMessage.from}
-                </div>
-                <div className={classes.content}>
-                  {origMessage.content}
-                </div>
-              </ListItem>
-            }
             {messages.map((message) => {
               return (
                 <>
-                  {
-                    thread === undefined &&
+                  { !thread &&
+                    <>
                       <TableRow >
                         {message.time}
                       </TableRow>
+                      <Divider />
+                    </>
                   }
-                  <Divider />
                   <ListMessage
-                    channel={channel}
-                    directory={directory}
-                    message={message.messages}
-                    inThread={thread !== undefined}
-                    inDM={directory === 'user'}
-                    setOrigMessage={setOrigMessage}
+                    channel={channel || user}
+                    directory={channel ? 'messages' : 'user'}
+                    from={'from'}
+                    messages={message.messages}
+                    threadException={thread}
                   />
                 </>
+              );
+            })}
+            {thread && threadMessages.map((message) => {
+              return (
+                <ListMessage
+                  from={'from_user'}
+                  messages={message.messages}
+                  inThread={true}
+                />
               );
             })}
           </TableBody>
