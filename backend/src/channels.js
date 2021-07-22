@@ -50,6 +50,11 @@ function orderMessages(messages) {
   for (message of sorted) {
     newTime = '';
     const time = new Date(message.sent);
+    let min = time.getMinutes();
+    if (min < 10) {
+      min = '0' + min;
+    }
+    message.sent = time.getHours() + ':' + min;
     const currDate = new Date();
     const day = time.getDate();
     const month = time.getMonth();

@@ -1,4 +1,3 @@
-const { json } = require('body-parser');
 const {Pool} = require('pg');
 
 const pool = new Pool({
@@ -292,10 +291,13 @@ exports.getDM = async (currUser, user2, thread) => {
   let select = 'SELECT id, from_user, to_user, content, sent_at, thread FROM dm';
   select += ` WHERE `;
   if (thread) {
-    select += `(id= '${thread}') AND `
-  }
-  select += `((from_user='${currUser}' AND to_user='${user2}')
+    select += `(id= '${thread}')`
+  } else if (user2) {
+    select += `((from_user='${currUser}' AND to_user='${user2}')
     OR (from_user='${user2}' AND to_user='${currUser}'))`;
+  } else {
+    select += `(from_user='${currUser}' OR to_user='${currUser}')`
+  }
   const query = {
     text: select,
   };
@@ -322,9 +324,6 @@ exports.getDM = async (currUser, user2, thread) => {
 };
 
 exports.sendDM = async (currUser, user2, body, thread) => {
-  if (user2 === currUser) {
-    return undefined;
-  }
   let returnID = '';
   const newDate = new Date().toISOString();
   if (thread && thread.match(idRe)) {
