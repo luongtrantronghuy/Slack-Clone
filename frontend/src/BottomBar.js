@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import {makeStyles} from '@material-ui/core';
+import {Hidden, makeStyles} from '@material-ui/core';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -26,30 +26,35 @@ function BottomBar(props) {
   const classes = useStyles();
 
   return (
-    <BottomNavigation className={classes.bottomBar}>
-      <BottomNavigationAction
-        component={Link}
-        to='/'
-        icon={<HomeIcon fontSize='large' />}
-      />
-      <BottomNavigationAction
-        value='HOME'
-        icon={<MessageIcon fontSize='large' />}
-      />
-      <BottomNavigationAction
-        value='HOME'
-        icon={<AlternateEmailIcon fontSize='large' />}
-      />
-      <BottomNavigationAction
-        value='HOME'
-        icon={<SearchIcon fontSize='large' />}
-      />
-      <BottomNavigationAction
-        component={Link}
-        to='/account'
-        icon={<AccountCircleIcon fontSize='large' />}
-      />
-    </BottomNavigation>
+    <Hidden smUp>
+      <BottomNavigation className={classes.bottomBar}>
+        <BottomNavigationAction
+          component={Link}
+          to='/'
+          icon={<HomeIcon fontSize='large' />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to='/dms'
+          icon={<MessageIcon fontSize='large' />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to='/mentions'
+          icon={<AlternateEmailIcon fontSize='large' />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to='/search'
+          icon={<SearchIcon fontSize='large' />}
+        />
+        <BottomNavigationAction
+          component={Link}
+          to='/account'
+          icon={<AccountCircleIcon fontSize='large' />}
+        />
+      </BottomNavigation>
+    </Hidden>
   );
 }
 

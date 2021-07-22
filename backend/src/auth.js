@@ -16,7 +16,7 @@ exports.authenticate = async (req, res) => {
     const accessToken = jwt.sign(
         {username: user.username, access: user.access},
         secrets.accessToken, {
-          expiresIn: '60m',
+          expiresIn: '24h',
           algorithm: 'HS256',
         });
     res.status(200).json({accessToken: accessToken, access: user.access});

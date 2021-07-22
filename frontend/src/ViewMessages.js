@@ -133,10 +133,10 @@ const postMessage = async (dir, channel, thread, bodyObj,
 };
 
 /**
- * Single button component for dropdown of channels
- * @param {object} props
- * @return {object} JSX
- */
+* Single button component for dropdown of channels
+* @param {object} props
+* @return {object} JSX
+*/
 function ListMessage(props) {
   const classes = useStyles();
 
@@ -180,10 +180,10 @@ function ListMessage(props) {
 }
 
 /**
- * Grabs all messages from defined workspace
- * @param {object} props
- * @return {object} JSX
- */
+* Grabs all messages from defined workspace
+* @param {object} props
+* @return {object} JSX
+*/
 function Messages(props) {
   const classes = useStyles();
   const scrollRef = React.useRef();

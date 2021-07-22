@@ -14,6 +14,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import ArrowDropDownCircleIcon from '@material-ui/icons/ArrowDropDownCircle';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import {Hidden} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   dropdown: {
@@ -37,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
  */
 function Home(props) {
   const classes = useStyles();
-  const username = localStorage.getItem('username');
   const [channelsOpen, setChannels] = React.useState(true);
   const [dmsOpen, setDms] = React.useState(true);
 
@@ -50,44 +50,42 @@ function Home(props) {
   };
 
   return (
-    <List>
-      <ListItem button onClick={toggleChannels} className={classes.dropdown}>
-        <ListItemIcon>
-          <ArrowDropDownCircleIcon color='primary'
-            style={channelsOpen ? {} : {transform: 'rotate(-90deg)'}} />
-        </ListItemIcon>
-        <ListItemText primary='Channels' />
-      </ListItem>
-      <Collapse in={channelsOpen}>
-        <List>
-          <ChannelsList
-            nested={classes.nested}
-            username={username}
-            workspace={props.workspace}
-          />
-          <ListItem button className={classes.nested}>
-            <ListItemIcon><AddBoxIcon /></ListItemIcon>
-            <ListItemText primary='Add new channel' />
-          </ListItem>
-        </List>
-      </Collapse>
-      <ListItem button onClick={toggleDms} className={classes.dropdown}>
-        <ListItemIcon>
-          <ArrowDropDownCircleIcon color='primary'
-            style={dmsOpen ? {} : {transform: 'rotate(-90deg)'}} />
-        </ListItemIcon>
-        <ListItemText primary='Direct Messages' />
-      </ListItem>
-      <Collapse in={dmsOpen}>
-        <List>
-          <Users nested={classes.nested} />
-          <ListItem button className={classes.nested}>
-            <ListItemIcon><PersonAddIcon /></ListItemIcon>
-            <ListItemText primary='Add Teammate' />
-          </ListItem>
-        </List>
-      </Collapse>
-    </List>
+    <Hidden smUp>
+      <List>
+        <ListItem button onClick={toggleChannels} className={classes.dropdown}>
+          <ListItemIcon>
+            <ArrowDropDownCircleIcon color='primary'
+              style={channelsOpen ? {} : {transform: 'rotate(-90deg)'}} />
+          </ListItemIcon>
+          <ListItemText primary='Channels' />
+        </ListItem>
+        <Collapse in={channelsOpen}>
+          <List>
+            <ChannelsList nested={classes.nested} />
+            <ListItem button className={classes.nested}>
+              <ListItemIcon><AddBoxIcon /></ListItemIcon>
+              <ListItemText primary='Add new channel' />
+            </ListItem>
+          </List>
+        </Collapse>
+        <ListItem button onClick={toggleDms} className={classes.dropdown}>
+          <ListItemIcon>
+            <ArrowDropDownCircleIcon color='primary'
+              style={dmsOpen ? {} : {transform: 'rotate(-90deg)'}} />
+          </ListItemIcon>
+          <ListItemText primary='Direct Messages' />
+        </ListItem>
+        <Collapse in={dmsOpen}>
+          <List>
+            <Users nested={classes.nested} />
+            <ListItem button className={classes.nested}>
+              <ListItemIcon><PersonAddIcon /></ListItemIcon>
+              <ListItemText primary='Add Teammate' />
+            </ListItem>
+          </List>
+        </Collapse>
+      </List>
+    </Hidden>
   );
 }
 

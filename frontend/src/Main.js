@@ -1,5 +1,8 @@
 import React from 'react';
 import {Switch, Route} from 'react-router-dom';
+import DMs from './ViewDMs.js';
+import Search from './ViewSearch.js';
+import Mentions from './ViewMentions.js';
 import Account from './ViewAccount.js';
 import BottomBar from './BottomBar.js';
 import Home from './ViewHome.js';
@@ -72,6 +75,9 @@ function Main(props) {
           <Route exact path='/messages/:channel' component={Messages} />
           <Route exact path='/user/:user' component={Messages} />
           <Route path='/user/:user/:thread' component={Messages} />
+          <Route path='/search' component={Search} />
+          <Route path='/mentions' component={Mentions} />
+          <Route path='/dms' component={DMs} />
           <Route exact path='/account'>
             <Account setLogin={setLogin} />
           </Route>
