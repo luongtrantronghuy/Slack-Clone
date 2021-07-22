@@ -8,7 +8,7 @@ const OpenApiValidator = require('express-openapi-validator');
 
 const auth = require('./auth');
 const channels = require('./channels');
-const user = require('./user')
+const user = require('./user');
 const workspaces = require('./workspaces');
 const dms = require('./dms');
 const message = require('./message');

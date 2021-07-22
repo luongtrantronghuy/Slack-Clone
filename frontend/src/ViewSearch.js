@@ -37,9 +37,11 @@ function Search(props) {
   const submitHandler = async (event) => {
     event.preventDefault();
     await fetchSearch(setMessages, setError, search);
-    console.log(messages);
+    // console.log(messages);
     setSearch('');
   };
+
+  console.log(messages);
 
   return (
     <>

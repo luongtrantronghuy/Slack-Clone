@@ -14,9 +14,11 @@ function Mentions(props) {
   const [messages, setMessages] = React.useState([]);
   const [error, setError] = React.useState();
 
+  console.log(messages);
+
   React.useEffect(() => {
-    fetchSearch(setMessages, setError, '%40' + localStorage.getItem('username'))
-      .then(console.log(messages))
+    fetchSearch(setMessages, setError, localStorage.getItem('username'))
+      // .then(console.log(messages))
       .catch((err) => console.log(err));
     // eslint-disable-next-line
   }, [setMessages]);

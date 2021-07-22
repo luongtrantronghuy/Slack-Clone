@@ -34,8 +34,13 @@ const fetchAPI = (url, setReturn, setError, defaultReturn) => {
     });
 };
 
+// credit:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
 exports.fetchSearch = async (setMessages, setError, content) => {
-  const url = '/v0/message?content=' + content;
+  const encoded = encodeURIComponent(content).replace(/[!'()*]/g, function(c) {
+    return '%' + c.charCodeAt(0).toString(16);
+  });
+  const url = '/v0/message?content=' + encoded;
   await fetchAPI(url, setMessages, setError, []);
 };
 

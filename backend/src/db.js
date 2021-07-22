@@ -25,14 +25,16 @@ function createUUID() {
 /**
   * Returns all Messages in a channel (assignment-1, dm, etc.)
   * as well as their corresponding thread messages
-  *
   * @param {string} channel
+  * @param {*} channelsList
   * @return {object}
 */
 exports.selectAllChannels = async (channel, channelsList) => {
   let rowss = [];
   if (channel) {
-    let select = `SELECT id, channel, messages, thread FROM channels WHERE channel = '${channel}'`;
+    const select =
+      `SELECT id, channel, messages, thread
+      FROM channels WHERE channel='${channel}'`;
     const query = {
       text: select,
     };
@@ -40,13 +42,15 @@ exports.selectAllChannels = async (channel, channelsList) => {
     rowss = rows;
   } else if (channelsList.length > 0) {
     for (allowedChannel of channelsList) {
-      let select = `SELECT id, channel, messages, thread FROM channels WHERE channel = '${allowedChannel}'`;
+      const select =
+        `SELECT id, channel, messages, thread
+        FROM channels WHERE channel = '${allowedChannel}'`;
       const query = {
         text: select,
       };
       const {rows} = await pool.query(query);
       for (row of rows) {
-        rowss.push(row)
+        rowss.push(row);
       }
     }
   } else {
@@ -76,16 +80,16 @@ exports.selectAllChannels = async (channel, channelsList) => {
   return channels;
 };
 
-/**
- *
+/** Get all message object given channel and id of message thread
  * @param {*} channel
+ * @param {*} thread
  */
 exports.getMessage = async (channel, thread) => {
   let select = `SELECT id, messages, thread FROM channels WHERE`;
   if (thread) {
-    select += ` id='${thread}' AND`
+    select += ` id='${thread}' AND`;
   }
-  select += ` channel = '${channel}'`
+  select += ` channel = '${channel}'`;
   const query = {
     text: select,
   };
@@ -96,7 +100,7 @@ exports.getMessage = async (channel, thread) => {
       row.messages.id = row.id;
       tempThread = [];
       for (mess of row.thread) {
-        if (mess !== ''){
+        if (mess !== '') {
           const jsonObj = JSON.parse(mess);
           tempThread.push(jsonObj);
         }
@@ -112,12 +116,12 @@ exports.getMessage = async (channel, thread) => {
   } else {
     return undefined;
   }
-}
+};
 
 /**
  *
  * @param {*} username
- * @returns
+ * @return {*}
  */
 exports.find = async (username) => {
   const select = `SELECT username, info, access FROM users
@@ -184,11 +188,11 @@ exports.sendNewMessage = async (body, channel, thread) => {
 };
 
 exports.selectUser = async (username, currentUser) => {
-  let select = `SELECT username, info, access FROM users`
+  let select = `SELECT username, info, access FROM users`;
   if (username) {
     select += ` WHERE username = '${username}'`;
   } else {
-    select += ` WHERE username != '${currentUser}'`
+    select += ` WHERE username != '${currentUser}'`;
   }
   const query = {
     text: select,
@@ -197,7 +201,8 @@ exports.selectUser = async (username, currentUser) => {
   if (rows) {
     const returnArray = [];
     for (row of rows) {
-      const user = {username: row.username, name: row.info.name, access: row.access};
+      const user = {username: row.username,
+        name: row.info.name, access: row.access};
       returnArray.push(user);
     }
     return returnArray;
@@ -209,23 +214,27 @@ exports.selectUser = async (username, currentUser) => {
 exports.getWorkspaces = async (access, code, username) => {
   const response = [];
   if (code) {
-    const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
+    const select =
+      `SELECT title, channels
+      FROM workspaces WHERE code = '${code}'`;
     const query = {
       text: select,
     };
     const {rows} = await pool.query(query);
     if (rows.length > 0) {
-      response.push({name: rows[0].title, channels: rows[0].channels})
+      response.push({name: rows[0].title, channels: rows[0].channels});
     }
   } else if (access.length > 0) {
     for (code of access) {
-      const select = `SELECT title, channels FROM workspaces WHERE code = '${code}'`
+      const select =
+        `SELECT title, channels
+        FROM workspaces WHERE code = '${code}'`;
       const query = {
         text: select,
       };
       const {rows} = await pool.query(query);
       if (rows.length > 0) {
-        response.push({name: rows[0].title, channels: rows[0].channels})
+        response.push({name: rows[0].title, channels: rows[0].channels});
       }
     }
   } else {
@@ -233,7 +242,9 @@ exports.getWorkspaces = async (access, code, username) => {
   }
   if (response.length > 0) {
     for (channel of response[0].channels) {
-      const select = `SELECT users FROM channelAccess WHERE title = '${channel}'`;
+      const select =
+        `SELECT users
+        FROM channelAccess WHERE title = '${channel}'`;
       const query = {
         text: select,
       };
@@ -256,15 +267,17 @@ exports.getWorkspaces = async (access, code, username) => {
   } else {
     return undefined;
   }
-}
+};
 
 exports.verifyChannels = async (channelList, username) => {
   const verifiedList = [];
-  if(channelList.length > 0) {
+  if (channelList.length > 0) {
     for (channel of channelList) {
-      const select = `SELECT users FROM channelAccess WHERE title = '${channel}'`
+      const select =
+        `SELECT users
+        FROM channelAccess WHERE title = '${channel}'`;
       const query = {
-        text: select
+        text: select,
       };
       const {rows} = await pool.query(query);
       if (rows) {
@@ -288,15 +301,16 @@ exports.verifyChannels = async (channelList, username) => {
 };
 
 exports.getDM = async (currUser, user2, thread) => {
-  let select = 'SELECT id, from_user, to_user, content, sent_at, thread FROM dm';
+  let select =
+    'SELECT id, from_user, to_user, content, sent_at, thread FROM dm';
   select += ` WHERE `;
   if (thread) {
-    select += `(id= '${thread}')`
+    select += `(id= '${thread}')`;
   } else if (user2) {
     select += `((from_user='${currUser}' AND to_user='${user2}')
     OR (from_user='${user2}' AND to_user='${currUser}'))`;
   } else {
-    select += `(from_user='${currUser}' OR to_user='${currUser}')`
+    select += `(from_user='${currUser}' OR to_user='${currUser}')`;
   }
   const query = {
     text: select,
@@ -306,7 +320,7 @@ exports.getDM = async (currUser, user2, thread) => {
     for (row of rows) {
       const tempThread = [];
       for (mess of row.thread) {
-        if (mess !== ''){
+        if (mess !== '') {
           const jsonObj = JSON.parse(mess);
           tempThread.push(jsonObj);
         }
@@ -341,12 +355,13 @@ exports.sendDM = async (currUser, user2, body, thread) => {
     returnID = thread;
   } else {
     const newID = createUUID();
-    const insert = `INSERT INTO dm(id, from_user, to_user, content, sent_at, thread)
+    const insert =
+      `INSERT INTO dm(id, from_user, to_user, content, sent_at, thread)
       VALUES ($1, $2, $3, $4, $5, $6)`;
     const query = {
       text: insert,
       values: [newID, currUser, user2, body.content, newDate, []],
-    }
+    };
     await pool.query(query);
     returnID = newID;
   }

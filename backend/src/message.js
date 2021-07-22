@@ -1,38 +1,50 @@
 const db = require('./db');
 
+/**
+ *
+ * @param {string} sentTime
+ * @return {string}
+*/
 function getTime(sentTime) {
   const currDate = new Date();
-    const time = new Date(sentTime);
-    let newTime = '';
-    const day = time.getDate();
-    const month = time.getMonth();
-    const year = time.getFullYear();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr',
-      'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
-      'Nov', 'Dec'];
-    if (day === currDate.getDate() &&
-      month === currDate.getMonth() &&
-      year === currDate.getFullYear()) {
-      newTime = 'Today';
-    } else if (year === currDate.getFullYear()) {
-      newTime = months[month] + ' ' + day;
-    } else {
-      newTime = day + ' '+ months[month] + ', ' + year.toString();
-    }
-    let min = time.getMinutes();
-    if (min < 10) {
-      min = '0' + min;
-    }
-    newTime = time.getHours() + ':' + min + ' ' + newTime;
-    return newTime;
+  const time = new Date(sentTime);
+  let newTime = '';
+  const day = time.getDate();
+  const month = time.getMonth();
+  const year = time.getFullYear();
+  const months = ['Jan', 'Feb', 'Mar', 'Apr',
+    'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+    'Nov', 'Dec'];
+  if (day === currDate.getDate() &&
+    month === currDate.getMonth() &&
+    year === currDate.getFullYear()) {
+    newTime = 'Today';
+  } else if (year === currDate.getFullYear()) {
+    newTime = months[month] + ' ' + day;
+  } else {
+    newTime = day + ' '+ months[month] + ', ' + year.toString();
+  }
+  let min = time.getMinutes();
+  if (min < 10) {
+    min = '0' + min;
+  }
+  newTime = time.getHours() + ':' + min + ' ' + newTime;
+  return newTime;
 }
 
+/**
+ *
+ * @param {*} messages
+ * @param {*} user
+ * @return {*}
+ */
 function orderMessages(messages, user) {
   if (messages.length == 0) {
     return messages;
   }
-  const sorted = messages.sort((a,b) =>
-    new Date(a.sent ? a.sent: a.sent_at) - new Date(b.sent ? b.sent : b.send_at));
+  const sorted = messages.sort((a, b) =>
+    new Date(a.sent ? a.sent: a.sent_at) -
+    new Date(b.sent ? b.sent : b.send_at));
   const ordered = [];
   let where = '';
   for (message of sorted) {
@@ -60,7 +72,7 @@ function orderMessages(messages, user) {
           break;
         }
       }
-      if (!found){
+      if (!found) {
         ordered.push({in: where, messages: [message]});
       }
     }
@@ -74,10 +86,12 @@ function orderMessages(messages, user) {
 
 exports.findMessage = async (req, res) => {
   try {
-    const workspaces = await db.getWorkspaces(req.user.access, undefined, req.user.username);
+    const workspaces = await db.getWorkspaces(req.user.access,
+        undefined, req.user.username);
     let verifiedList = [];
     for (workspace of workspaces) {
-      const verifiedChannels = await db.verifyChannels(workspace.channels, req.user.username);
+      const verifiedChannels = await db.verifyChannels(workspace.channels,
+          req.user.username);
       verifiedList = verifiedList.concat(verifiedChannels);
     }
     let allChannelMsg = [];
@@ -93,8 +107,8 @@ exports.findMessage = async (req, res) => {
     const resultDM = orderMessages(foundDM, req.user.username);
     const resultChannel = orderMessages(foundChannel, req.user.username);
     const resultArray = resultChannel.concat(resultDM);
-    res.status(200).json(resultArray)
-  } catch(err) {
+    res.status(200).json(resultArray);
+  } catch (err) {
     res.status(404).send();
   }
 };
@@ -105,9 +119,11 @@ searchContent = (messages, content) => {
     const tempThread = [];
     if (message.thread.length > 0) {
       for (threadMsg of message.thread) {
-        const found = threadMsg.content.toLowerCase().indexOf(content.toLowerCase());
+        const found =
+          threadMsg.content.toLowerCase().indexOf(content.toLowerCase());
         if (found > -1) {
-          const newTime = getTime(threadMsg.sent ? threadMsg.sent : threadMsg.sent_at);
+          const newTime = getTime(threadMsg.sent ? threadMsg.sent :
+              threadMsg.sent_at);
           if (threadMsg.sent_at) {
             threadMsg.sent_at = newTime;
           } else {
@@ -124,7 +140,7 @@ searchContent = (messages, content) => {
       resultArray.push(message);
     } else if (message.thread.length > 0) {
       message.found = false;
-      resultArray.push(message)
+      resultArray.push(message);
     }
   }
   return resultArray;
