@@ -143,9 +143,12 @@ const postMessage = (dir, channel, thread, bodyObj, setReturn, setError) => {
 function ListMessage(props) {
   const classes = useStyles();
 
-  // const openThread = (message) => {
-  //   console.log(message);
-  // };
+  const openThread = (message) => {
+    props.setOrigMessage({
+      content: message.content,
+      from: props.inDM? message.from_user : message.from,
+    });
+  };
 
   return (
     <>
@@ -155,7 +158,7 @@ function ListMessage(props) {
           <ListItem
             component={!props.inThread && Link}
             to={'/' + props.directory + '/' + props.channel + '/' + message.id}
-            // onClick={() => openThread(message)}
+            onClick={() => !props.inThread && openThread(message)}
             className={props.inThread ?
               classes.threadReply : classes.messageBox
             }
@@ -171,9 +174,12 @@ function ListMessage(props) {
             <div className={classes.content}>
               {message.content}
             </div>
-            <div className={classes.threadInfo}>
-              Thread
-            </div>
+            {
+              !props.inThread &&
+              <div className={classes.threadInfo}>
+                Thread
+              </div>
+            }
           </ListItem>
         );
       })}
@@ -195,6 +201,7 @@ function Messages(props) {
   const [draft, composeMessage] = React.useState('');
   const [messages, setMessages] = React.useState([]);
   const [newMessage, sendNewMessage] = React.useState({});
+  const [origMessage, setOrigMessage] = React.useState({content: '', from: ''});
   const [error, setError] = React.useState([]);
 
   React.useEffect(() => {
@@ -272,6 +279,22 @@ function Messages(props) {
         </div>
         <List className={classes.message}>
           <TableBody >
+            {
+              thread !== undefined &&
+              <ListItem className={classes.messageBox} >
+                <div className={classes.avatar}>
+                  <Avatar className={classes.avatar}>
+                    <PersonIcon />
+                  </Avatar>
+                </div>
+                <div className={classes.messageUser}>
+                  {origMessage.from}
+                </div>
+                <div className={classes.content}>
+                  {origMessage.content}
+                </div>
+              </ListItem>
+            }
             {messages.map((message) => {
               return (
                 <>
@@ -288,6 +311,7 @@ function Messages(props) {
                     message={message.messages}
                     inThread={thread !== undefined}
                     inDM={directory === 'user'}
+                    setOrigMessage={setOrigMessage}
                   />
                 </>
               );

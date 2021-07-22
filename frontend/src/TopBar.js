@@ -46,13 +46,15 @@ function TopBar(props) {
     const pathArray = location.pathname.split('/');
     if (pathArray[1] === 'messages' || pathArray[1] === 'user') {
       if (pathArray[3]) {
-        directory = 'Thread';
+        directory = 'Thread ' + pathArray[2];
       } else {
         directory = pathArray[2];
       }
     } else if (pathArray[1] === 'account') {
       directory = '';
     }
+  } else {
+
   }
 
   return (
