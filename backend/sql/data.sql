@@ -25,7 +25,7 @@ INSERT INTO channels(channel, messages, thread) VALUES ('different-channel','{"c
 -- }
 DELETE FROM users;
 INSERT INTO users(username, info, access) VALUES ('molly', '{"name": "Molly Member", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}', ARRAY ['cse183']);
-INSERT INTO users(username, info, access) VALUES ('mollysister', '{"name": "Molly Sister Member", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}', ARRAY ['cse183']);
+INSERT INTO users(username, info, access) VALUES ('mollysister', '{"name": "Molly Sister", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.iJufk6Nxx6gAoHRG8t2eHyGgoP2bK4y"}', ARRAY ['cse183']);
 INSERT INTO users(username, info, access) VALUES ('anna', '{"name": "Anna Admin", "password": "$2b$10$Y00XOZD/f5gBSpDusPUgU.G1ohpR3oQbbBHK4KzX7dU219Pv/lzze"}', ARRAY ['cse183', 'workspace2']);
 
 DELETE FROM workspaces;
