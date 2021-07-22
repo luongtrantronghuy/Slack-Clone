@@ -4,12 +4,17 @@ function orderMessages(messages) {
   if (messages.length == 0) {
     return messages;
   }
-  const sorted = messages.sort((a,b) => new Date(a.sent) - new Date(b.sent));
+  const sorted = messages.sort((a,b) => new Date(a.sent_at) - new Date(b.sent_at));
   const ordered = [];
   let newTime = '';
   for (message of sorted) {
     newTime = '';
     const time = new Date(message.sent_at);
+    let min = time.getMinutes();
+    if (min < 10) {
+      min = '0' + min;
+    }
+    message.sent_at = time.getHours() + ':' + min;
     const currDate = new Date();
     const day = time.getDate();
     const month = time.getMonth();

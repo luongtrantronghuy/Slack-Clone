@@ -248,6 +248,36 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /message:
+    get:
+      description: Get all messages that match given content
+      parameters:
+      - name: content
+        in: query
+        description: Content for lookup
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: DM Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseArray'
+        404:
+          description: Channel not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: Unexpected Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Error:

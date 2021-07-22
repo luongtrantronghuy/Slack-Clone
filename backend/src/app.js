@@ -11,6 +11,7 @@ const channels = require('./channels');
 const user = require('./user')
 const workspaces = require('./workspaces');
 const dms = require('./dms');
+const message = require('./message');
 
 const app = express();
 app.use(cors());
@@ -40,6 +41,7 @@ app.get('/v0/user', auth.check, user.getUser);
 app.get('/v0/workspaces', auth.check, workspaces.getWorkspaces);
 app.get('/v0/dm/:username', auth.check, dms.getDM);
 app.post('/v0/dm/:username:thread', auth.check, dms.sendDM);
+app.get('/v0/message', auth.check, message.findMessage);
 
 app.use((err, req, res, next) => {
   res.status(err.status).json({
