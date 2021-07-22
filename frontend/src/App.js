@@ -16,7 +16,6 @@
  */
 import React from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
-import {fetchUserInfo} from './Fetcher.js';
 import Login from './Login.js';
 import Main from './Main.js';
 import {createTheme} from '@material-ui/core/styles';
@@ -49,22 +48,14 @@ function App() {
     localStorage.getItem('user') !== null,
   );
 
-  const username = localStorage.getItem('username');
-  const [userInfo, setUserInfo] = React.useState([{access: {}}]);
-  const [error, setError] = React.useState([]);
-
-  React.useEffect(() => {
-    fetchUserInfo(setUserInfo, setError, username);
-  }, [username]);
-
   return (
     <div className='root'>
       <Router>
         <CssBaseline />
         <ThemeProvider theme={theme}>
           {
-            loggedIn && !error ?
-              <Main workspace={userInfo[0].access[0]} setLogin={setLogin} /> :
+            loggedIn ?
+              <Main setLogin={setLogin} /> :
               <Login setLogin={setLogin} />
           }
         </ThemeProvider>

@@ -4,7 +4,6 @@ import Account from './ViewAccount.js';
 import BottomBar from './BottomBar.js';
 import Home from './ViewHome.js';
 import Messages from './ViewMessages.js';
-import Thread from './ViewThread.js';
 import TopBar from './TopBar.js';
 import WorkspaceList from './ListWorkspaces';
 import {makeStyles} from '@material-ui/core/styles';
@@ -72,12 +71,15 @@ function Main(props) {
             <Home />
           </Route>
           <Route path='/messages/:name/:thread'>
-            <Thread />
+            <Messages />
           </Route>
           <Route path='/messages/:name'>
             <Messages />
           </Route>
           <Route path='/user/:user'>
+            <Messages />
+          </Route>
+          <Route path='/user/:user/:thread'>
             <Messages />
           </Route>
           <Route path='/account'>

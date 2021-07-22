@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import ChannelsList from './ListChannels';
-import Users from './OpenDMs';
+import Users from './ListUsers';
 import {makeStyles} from '@material-ui/core/styles';
 import Collapse from '@material-ui/core/Collapse';
 import List from '@material-ui/core/List';

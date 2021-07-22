@@ -34,8 +34,23 @@ const fetchAPI = (url, setReturn, setError, defaultReturn) => {
     });
 };
 
-exports.fetchMessages = async (setMessages, setError, directory) => {
-  const url = '/v0/channels/'.concat(directory);
+exports.fetchThread = async (setMessages, setError, channel, thread) => {
+  const url ='/v0/channels/' + channel + '?thread=' + thread;
+  await fetchAPI(url, setMessages, setError, []);
+};
+
+exports.fetchMessages = async (setMessages, setError, channel) => {
+  const url = '/v0/channels/'.concat(channel);
+  await fetchAPI(url, setMessages, setError, []);
+};
+
+exports.fetchDMThread = async (setMessages, setError, username, thread) => {
+  const url = '/v0/dm/' + username + '?thread=' + thread;
+  await fetchAPI(url, setMessages, setError, []);
+};
+
+exports.fetchDMs = async (setMessages, setError, username) => {
+  const url = '/v0/dm/'.concat(username);
   await fetchAPI(url, setMessages, setError, []);
 };
 
