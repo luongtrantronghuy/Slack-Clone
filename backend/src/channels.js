@@ -11,7 +11,8 @@ exports.getAll = async (req, res) => {
   const workspaces = await db.getWorkspaces(req.user.access);
   // workspaces[0] is temporary solution
   // should be the current workspace
-  const channelList = await db.verifyChannels(workspaces[0].channels, req.user.username);
+  const channelList =
+    await db.verifyChannels(workspaces[0].channels, req.user.username);
   if (!channelList) {
     res.status(404).send();
   }
@@ -40,11 +41,17 @@ exports.sendMessage = async (req, res) => {
   }
 };
 
+/**
+ * order an array of messages
+ *
+ * @param {*} messages
+ * @return {*}
+ */
 function orderMessages(messages) {
   if (messages.length == 0) {
     return messages;
   }
-  const sorted = messages.sort((a,b) => new Date(a.sent) - new Date(b.sent));
+  const sorted = messages.sort((a, b) => new Date(a.sent) - new Date(b.sent));
   const ordered = [];
   let newTime = '';
   for (message of sorted) {
@@ -82,7 +89,7 @@ function orderMessages(messages) {
           break;
         }
       }
-      if (!found){
+      if (!found) {
         ordered.push({time: newTime, messages: [message]});
       }
     }
@@ -99,7 +106,7 @@ exports.getMessage = async (req, res) => {
     const messages = await db.getMessage(req.params.channel, req.query.thread);
     const ordered = orderMessages(messages);
     res.status(200).json(ordered);
-  } catch(err) {
+  } catch (err) {
     res.status(404).send();
   }
 };

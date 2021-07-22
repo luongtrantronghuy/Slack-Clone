@@ -1,10 +1,16 @@
 const db = require('./db');
 
+/**
+ *
+ * @param {*} messages
+ * @return {*}
+ */
 function orderMessages(messages) {
   if (messages.length == 0) {
     return messages;
   }
-  const sorted = messages.sort((a,b) => new Date(a.sent_at) - new Date(b.sent_at));
+  const sorted = messages.sort((a, b) =>
+    new Date(a.sent_at) - new Date(b.sent_at));
   const ordered = [];
   let newTime = '';
   for (message of sorted) {
@@ -42,7 +48,7 @@ function orderMessages(messages) {
           break;
         }
       }
-      if (!found){
+      if (!found) {
         ordered.push({time: newTime, messages: [message]});
       }
     }
@@ -56,19 +62,21 @@ function orderMessages(messages) {
 
 exports.getDM = async (req, res) => {
   try {
-    const messages = await db.getDM(req.user.username, req.params.username, req.query.thread);
+    const messages = await db.getDM(req.user.username,
+        req.params.username, req.query.thread);
     const ordered = orderMessages(messages);
     res.status(200).json(ordered);
-  } catch(err) {
+  } catch (err) {
     res.status(404).send();
   }
 };
 
 exports.sendDM = async (req, res) => {
-  try{
-    const message = await db.sendDM(req.user.username, req.params.username, req.body, req.query.thread);
+  try {
+    const message = await db.sendDM(req.user.username,
+        req.params.username, req.body, req.query.thread);
     res.status(201).json(message);
-  } catch(err) {
+  } catch (err) {
     res.status(400).send();
   }
 };

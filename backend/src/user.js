@@ -1,7 +1,7 @@
 const db = require('./db');
 
 exports.getUser = async (req, res) => {
-  let username = undefined
+  let username = undefined;
   if (Object.keys(req.query).length !== 0) {
     username = req.query.username;
   }

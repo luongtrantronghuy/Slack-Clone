@@ -6,7 +6,8 @@ const db = require('./db');
  * @param {*} res
  */
 exports.getWorkspaces = async (req, res) => {
-  const workspaces = await db.getWorkspaces(req.user.access, req.query.code, req.user.username);
+  const workspaces = await db.getWorkspaces(req.user.access,
+      req.query.code, req.user.username);
   if (workspaces) {
     res.status(200).json(workspaces);
   } else {
