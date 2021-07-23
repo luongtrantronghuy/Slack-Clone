@@ -24,14 +24,17 @@ const useStyles = makeStyles((theme) => ({
     height: 'auto',
     maxWidth: '100hv',
     backgroundColor: theme.palette.background.paper,
-    paddingLeft: '10%',
+    paddingLeft: '5%',
     paddingRight: '5%',
     overflowY: 'scroll',
     marginLeft: '0%',
     marginRight: '0%',
     width: '90%',
     [theme.breakpoints.up('md')]: {
-      margin: '0 225px',
+      position: 'relative',
+      fontSize: 17,
+      margin: '0 150px',
+      paddingLeft: '120px',
     },
   },
   inputField: {
@@ -81,7 +84,7 @@ function ListResult(props) {
                 <span>{message.content}</span>
                 <span
                   className={classes.time}
-                > at: {message.sent ? message.sent : message.sent_at}</span>
+                > at {message.sent ? message.sent : message.sent_at}</span>
               </div>
               <div>{thread}</div>
             </List>

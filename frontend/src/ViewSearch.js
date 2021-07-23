@@ -1,7 +1,7 @@
 import React from 'react';
 import {fetchSearch} from './Fetcher';
-import {makeStyles, TableBody, TableRow, TextField} from '@material-ui/core';
-import {ListItem, Divider, List} from '@material-ui/core';
+import {TableBody, TableRow, TextField} from '@material-ui/core';
+import {Hidden, makeStyles, ListItem, Divider, List} from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   notfound: {
@@ -24,6 +24,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '5%',
     // marginRight: '10%',
     width: '90%',
+    [theme.breakpoints.up('md')]: {
+      position: 'relative',
+      fontSize: 17,
+      margin: '0 150px',
+      paddingLeft: '120px',
+    },
   },
   inputField: {
     width: '100%',
@@ -112,19 +118,36 @@ function Search(props) {
 
   return (
     <>
-      <div className={classes.messageWrapper}>
-        <form noValidate autoComplete="off" onSubmit={submitHandler}>
-          <TextField
-            value={search}
-            color='primary'
-            id='compose-msg'
-            variant='outlined'
-            placeholder='search'
-            onChange={changeHandler}
-            className={classes.inputField}
-          />
-        </form>
-      </div>
+      <Hidden xsDown>
+        <div>
+          <form noValidate autoComplete="off">
+            <TextField
+              value={search}
+              color='primary'
+              id='compose-msg'
+              variant='outlined'
+              placeholder='search'
+              onChange={changeHandler}
+              className={classes.inputField}
+            />
+          </form>
+        </div>
+      </Hidden>
+      <Hidden smUp>
+        <div className={classes.messageWrapper}>
+          <form noValidate autoComplete="off" onSubmit={submitHandler}>
+            <TextField
+              value={search}
+              color='primary'
+              id='compose-msg'
+              variant='outlined'
+              placeholder='search'
+              onChange={changeHandler}
+              className={classes.inputField}
+            />
+          </form>
+        </div>
+      </Hidden>
       <div>{error}</div>
       <List className={classes.root}>
         <TableBody>
