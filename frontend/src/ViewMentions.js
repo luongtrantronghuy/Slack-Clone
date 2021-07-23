@@ -62,17 +62,17 @@ function ListResult(props) {
   const classes = useStyles();
   return (
     <>
-      {props.messages.map((message) => {
+      {props.messages.map((message, idx) => {
         if (message) {
           let thread = <></>;
           if (message.thread.length > 0) {
             thread =
             <>
-              <ListItem>Thread:</ListItem>
+              <ListItem key={idx}>Thread:</ListItem>
               <List>
-                {message.thread.map((thread) => {
+                {message.thread.map((thread, idx) => {
                   return (
-                    <ListItem>{thread.content}</ListItem>
+                    <ListItem key={idx}>{thread.content}</ListItem>
                   );
                 })}
               </List>
@@ -80,7 +80,8 @@ function ListResult(props) {
           }
           return (
             <List>
-              <div className={message.found ? classes.found : classes.notfound}>
+              <div key={idx}
+                className={message.found ? classes.found : classes.notfound}>
                 <span>{message.content}</span>
                 <span
                   className={classes.time}
@@ -123,10 +124,13 @@ function Mentions(props) {
       {isWidthUp('sm', props.width) && <Home />}
       <List className={classes.root}>
         <TableBody>
-          {messages.map((message) => {
+          {messages.map((message, idx) => {
             return (
               <>
-                <TableRow className={classes.from}>
+                <TableRow
+                  key={idx}
+                  className={classes.from}
+                >
                   In: {message.in}
                 </TableRow>
                 <Divider/>

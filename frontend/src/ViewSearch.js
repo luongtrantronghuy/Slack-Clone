@@ -68,17 +68,17 @@ function ListResult(props) {
   const classes = useStyles();
   return (
     <>
-      {props.messages.map((message) => {
+      {props.messages.map((message, idx) => {
         if (message) {
           let thread = <></>;
           if (message.thread.length > 0) {
             thread =
             <>
-              <ListItem>Thread:</ListItem>
+              <ListItem key={idx}>Thread:</ListItem>
               <List>
                 {message.thread.map((thread) => {
                   return (
-                    <ListItem>{thread.content}</ListItem>
+                    <ListItem key={idx++}>{thread.content}</ListItem>
                   );
                 })}
               </List>
