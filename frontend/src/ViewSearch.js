@@ -51,7 +51,6 @@ function ListResult(props) {
   return (
     <>
       {props.messages.map((message) => {
-        console.log(message);
         if (message) {
           let thread = <></>;
           if (message.thread.length > 0) {
@@ -109,7 +108,7 @@ function Search(props) {
     setSearch('');
   };
 
-  console.log(messages);
+  // console.log(messages);
 
   return (
     <>

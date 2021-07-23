@@ -81,7 +81,7 @@ function Users(props) {
       <UserListItem
         nested={props.nested}
         name={userInfo[0].name.concat(' (You)')}
-        link={'/user/'.concat(userInfo[0].name)}
+        link={'/user/'.concat(userInfo[0].username)}
       />
       {userList.map((user) =>
         <UserListItem

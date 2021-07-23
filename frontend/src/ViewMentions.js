@@ -24,11 +24,11 @@ const useStyles = makeStyles((theme) => ({
     height: 'auto',
     maxWidth: '100hv',
     backgroundColor: theme.palette.background.paper,
-    paddingLeft: '5%',
+    paddingLeft: '10%',
     paddingRight: '5%',
     overflowY: 'scroll',
-    marginLeft: '5%',
-    // marginRight: '10%',
+    marginLeft: '0%',
+    marginRight: '0%',
     width: '90%',
     [theme.breakpoints.up('md')]: {
       margin: '0 225px',
@@ -60,7 +60,6 @@ function ListResult(props) {
   return (
     <>
       {props.messages.map((message) => {
-        console.log(message);
         if (message) {
           let thread = <></>;
           if (message.thread.length > 0) {
@@ -106,10 +105,10 @@ function Mentions(props) {
   const [error, setError] = React.useState();
   const classes = useStyles();
 
-  console.log(messages);
+  // console.log(messages);
 
   React.useEffect(() => {
-    fetchSearch(setMessages, setError, localStorage.getItem('username'))
+    fetchSearch(setMessages, setError, '@' + localStorage.getItem('username'))
       // .then(console.log(messages))
       .catch((err) => console.log(err));
     // eslint-disable-next-line
