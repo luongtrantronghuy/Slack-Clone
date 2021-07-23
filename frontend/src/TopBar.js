@@ -1,7 +1,8 @@
 import React from 'react';
-import {useLocation, useHistory, Redirect} from 'react-router-dom';
+import {useLocation, useHistory} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
 import {Hidden, TextField} from '@material-ui/core';
+import {Redirect} from 'react-router';
 import {Link} from 'react-router-dom';
 import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
@@ -59,6 +60,16 @@ function TopBar(props) {
   const pathArray = pathname.split('/');
   pathArray.splice(0, 1);
   const [location, chann, thread] = pathArray; // /messages <-
+  const [search, setSearch] = React.useState('');
+  const [redirect, setRedirect] = React.useState(false);
+
+  const changeHandler = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const submitHandler = (event) => {
+    setRedirect(true);
+  };
 
   // grab channel name if we're in one
   const getDirectory = () => {
@@ -124,16 +135,16 @@ function TopBar(props) {
         <div component={Link}
           to='/mentions'>
           <form noValidate autoComplete="off"
-            onSubmit={() => {
-              return <Redirect to='/search'/>;
-            }}>
+            onSubmit={submitHandler}
+          >
+            {redirect ? <Redirect to="/search" /> : <></>}
             <TextField
-              // value={search}
+              value={search}
               color='primary'
               id='compose-msg'
               variant='outlined'
               placeholder='search'
-              // onChange={changeHandler}
+              onChange={changeHandler}
               className={classes.inputField}
             />
           </form>

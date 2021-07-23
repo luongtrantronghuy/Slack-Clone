@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     width: '90%',
     maxWidth: '1000px',
     height: 'auto',
+    zIndex: 10000,
   },
 }));
 
