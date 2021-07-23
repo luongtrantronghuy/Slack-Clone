@@ -48,12 +48,19 @@ const useStyles = makeStyles((theme) => ({
     gridRow: '2',
     gridColumn: '2',
   },
-  circle: {
+  active: {
     height: '10px',
     width: '10px',
     marginRight: '10px',
     borderRadius: '50%',
     backgroundColor: 'green',
+  },
+  away: {
+    height: '10px',
+    width: '10px',
+    marginRight: '10px',
+    borderRadius: '50%',
+    backgroundColor: 'darkgoldenrod',
   },
   nameLabel: {
     ...theme.typography.h5,
@@ -98,9 +105,9 @@ function UserCard(props) {
         </div>
       </div>
       <div className={classes.userStatus}>
-        <div className={classes.circle} />
+        <div className={props.away ? classes.away : classes.active} />
         <Typography variant='subtitle2'>
-          Active
+          {props.away ? 'Away' : 'Active'}
         </Typography>
       </div>
     </div>
@@ -137,6 +144,14 @@ function Account(props) {
   const username = localStorage.getItem('username');
   const [userInfo, setUserInfo] = React.useState([{name: ''}]);
   const [error, setError] = React.useState([]);
+  const [away, setAway] = React.useState(false);
+
+  /**
+   *
+  */
+  const awayToggle = () => {
+    setAway(!away);
+  };
 
   React.useEffect(() => {
     fetchUserInfo(setUserInfo, setError, username);
@@ -145,10 +160,14 @@ function Account(props) {
   return (
     <>
       <div>{error}</div>
-      <UserCard name={userInfo[0].name} />
-      <StatusBar />
-      <Button disableRipple className={classes.endButton}>
-        Set yourself as AWAY
+      <UserCard name={userInfo[0].name}
+        away={away}
+      />
+      <StatusBar/>
+      <Button disableRipple className={classes.endButton}
+        onClick={() => awayToggle()}
+      >
+        Set yourself as {away ? 'ACTIVE' : 'AWAY'}
       </Button>
       <Divider />
       <Button

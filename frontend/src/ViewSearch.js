@@ -1,7 +1,9 @@
 import React from 'react';
+import Home from './ViewHome.js';
 import {fetchSearch} from './Fetcher';
-import {makeStyles, TableBody, TableRow, TextField} from '@material-ui/core';
-import {ListItem, Divider, List} from '@material-ui/core';
+import {TableBody, TableRow, TextField} from '@material-ui/core';
+import {Hidden, makeStyles, ListItem, Divider, List} from '@material-ui/core';
+import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles((theme) => ({
   notfound: {
@@ -24,6 +26,12 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '5%',
     // marginRight: '10%',
     width: '90%',
+    [theme.breakpoints.up('md')]: {
+      position: 'relative',
+      fontSize: 17,
+      margin: '0 150px',
+      paddingLeft: '120px',
+    },
   },
   inputField: {
     width: '100%',
@@ -33,11 +41,21 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     justifyContent: 'center',
     gridTemplateColumns: '100%',
-    margin: '0 auto',
     marginTop: '10px',
     width: '90%',
     maxWidth: '1000px',
     height: 'auto',
+    zIndex: 10000,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 17,
+      margin: '0 auto',
+      paddingLeft: '120px',
+    },
+    [theme.breakpoints.up('md')]: {
+      fontSize: 17,
+      margin: '0 150px',
+      paddingLeft: '120px',
+    },
   },
 }));
 
@@ -51,7 +69,6 @@ function ListResult(props) {
   return (
     <>
       {props.messages.map((message) => {
-        console.log(message);
         if (message) {
           let thread = <></>;
           if (message.thread.length > 0) {
@@ -109,23 +126,41 @@ function Search(props) {
     setSearch('');
   };
 
-  console.log(messages);
+  // console.log(messages);
 
   return (
     <>
-      <div className={classes.messageWrapper}>
-        <form noValidate autoComplete="off" onSubmit={submitHandler}>
-          <TextField
-            value={search}
-            color='primary'
-            id='compose-msg'
-            variant='outlined'
-            placeholder='search'
-            onChange={changeHandler}
-            className={classes.inputField}
-          />
-        </form>
-      </div>
+      {isWidthUp('sm', props.width) && <Home />}
+      <Hidden xsDown>
+        <div>
+          <form noValidate autoComplete="off">
+            <TextField
+              value={search}
+              color='primary'
+              id='compose-msg'
+              variant='outlined'
+              placeholder='search'
+              onChange={changeHandler}
+              className={classes.inputField}
+            />
+          </form>
+        </div>
+      </Hidden>
+      <Hidden smUp>
+        <div className={classes.messageWrapper}>
+          <form noValidate autoComplete="off" onSubmit={submitHandler}>
+            <TextField
+              value={search}
+              color='primary'
+              id='compose-msg'
+              variant='outlined'
+              placeholder='search'
+              onChange={changeHandler}
+              className={classes.inputField}
+            />
+          </form>
+        </div>
+      </Hidden>
       <div>{error}</div>
       <List className={classes.root}>
         <TableBody>
@@ -148,4 +183,4 @@ function Search(props) {
   );
 }
 
-export default Search;
+export default withWidth()(Search);

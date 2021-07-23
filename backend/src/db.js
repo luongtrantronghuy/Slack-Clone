@@ -317,7 +317,7 @@ exports.getDM = async (currUser, user2, thread) => {
     text: select,
   };
   const {rows} = await pool.query(query);
-  if (rows.length > 0) {
+  if (rows) {
     for (row of rows) {
       const tempThread = [];
       for (mess of row.thread) {

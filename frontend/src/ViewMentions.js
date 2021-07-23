@@ -27,11 +27,14 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: '5%',
     paddingRight: '5%',
     overflowY: 'scroll',
-    marginLeft: '5%',
-    // marginRight: '10%',
+    marginLeft: '0%',
+    marginRight: '0%',
     width: '90%',
     [theme.breakpoints.up('md')]: {
-      margin: '0 225px',
+      position: 'relative',
+      fontSize: 17,
+      margin: '0 150px',
+      paddingLeft: '120px',
     },
   },
   inputField: {
@@ -60,7 +63,6 @@ function ListResult(props) {
   return (
     <>
       {props.messages.map((message) => {
-        console.log(message);
         if (message) {
           let thread = <></>;
           if (message.thread.length > 0) {
@@ -82,7 +84,7 @@ function ListResult(props) {
                 <span>{message.content}</span>
                 <span
                   className={classes.time}
-                > at: {message.sent ? message.sent : message.sent_at}</span>
+                > at {message.sent ? message.sent : message.sent_at}</span>
               </div>
               <div>{thread}</div>
             </List>
@@ -106,10 +108,10 @@ function Mentions(props) {
   const [error, setError] = React.useState();
   const classes = useStyles();
 
-  console.log(messages);
+  // console.log(messages);
 
   React.useEffect(() => {
-    fetchSearch(setMessages, setError, localStorage.getItem('username'))
+    fetchSearch(setMessages, setError, '@' + localStorage.getItem('username'))
       // .then(console.log(messages))
       .catch((err) => console.log(err));
     // eslint-disable-next-line

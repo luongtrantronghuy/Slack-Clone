@@ -1,12 +1,24 @@
 import React from 'react';
 import {useLocation, useHistory} from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
+import {Hidden, TextField} from '@material-ui/core';
+import {Redirect} from 'react-router';
+import {Link} from 'react-router-dom';
 import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles((theme) => ({
+  inputField: {
+    position: 'fixed',
+    textAlign: 'center',
+    left: '40%',
+    top: '0.4%',
+    height: '10px',
+    fontSize: 10,
+    width: '300px',
+  },
   title: {
     marginLeft: '10px',
     [theme.breakpoints.up('sm')]: {
@@ -48,6 +60,16 @@ function TopBar(props) {
   const pathArray = pathname.split('/');
   pathArray.splice(0, 1);
   const [location, chann, thread] = pathArray; // /messages <-
+  const [search, setSearch] = React.useState('');
+  const [redirect, setRedirect] = React.useState(false);
+
+  const changeHandler = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const submitHandler = (event) => {
+    setRedirect(true);
+  };
 
   // grab channel name if we're in one
   const getDirectory = () => {
@@ -109,6 +131,25 @@ function TopBar(props) {
           <ExpandMoreIcon color='primary' fontSize='small'/>
         </Fab>
       }
+      <Hidden xsDown>
+        <div component={Link}
+          to='/mentions'>
+          <form noValidate autoComplete="off"
+            onSubmit={submitHandler}
+          >
+            {redirect ? <Redirect to="/search" /> : <></>}
+            <TextField
+              value={search}
+              color='primary'
+              id='compose-msg'
+              variant='outlined'
+              placeholder='search'
+              onChange={changeHandler}
+              className={classes.inputField}
+            />
+          </form>
+        </div>
+      </Hidden>
     </>
   );
 }
