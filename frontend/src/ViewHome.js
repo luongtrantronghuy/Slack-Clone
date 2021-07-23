@@ -23,6 +23,7 @@ import MessageIcon from '@material-ui/icons/Message';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 import Toolbar from '@material-ui/core/Toolbar';
+import {useTheme} from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   dropdown: {
@@ -52,6 +53,8 @@ function Home(props) {
   const classes = useStyles();
   const [channelsOpen, setChannels] = React.useState(true);
   const [dmsOpen, setDms] = React.useState(true);
+  const theme = useTheme();
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const toggleChannels = () => {
     setChannels(!channelsOpen);
@@ -59,6 +62,10 @@ function Home(props) {
 
   const toggleDms = () => {
     setDms(!dmsOpen);
+  };
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
   };
 
   const wrappedContent = (
@@ -132,7 +139,7 @@ function Home(props) {
   return (
     <>
       {
-        isWidthUp('sm', props.width) ?
+        isWidthUp('md', props.width) ?
           (
             <Drawer
               open={true}
@@ -142,7 +149,19 @@ function Home(props) {
               <Toolbar />
               {wrappedContent}
             </Drawer>
-          ) : wrappedContent
+          ) : isWidthUp('sm', props.width) ?
+            (
+              <Drawer
+                open={true}
+                variant={'temporary'}
+                anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+                onClose={handleDrawerToggle}
+                classes={{paper: classes.paper}}
+              >
+                <Toolbar />
+                {wrappedContent}
+              </Drawer>
+            ) : wrappedContent
       }
     </>
   );

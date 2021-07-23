@@ -144,13 +144,13 @@ function ListMessage(props) {
 
   return (
     <>
-      {props.messages.map((message) => {
+      {props.messages.map((message, idx) => {
         if (props.threadException && message.id !== props.threadException) {
           return <div />;
         }
 
         return (
-          <ListItem
+          <ListItem key={idx}
             component={!props.inThread && !props.threadException && Link}
             to={'/' + props.directory + '/' + props.channel + '/' + message.id}
             className={props.inThread ?
