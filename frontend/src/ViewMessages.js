@@ -3,6 +3,7 @@
  * https://stackoverflow.com/questions/37620694/how-to-scroll-to-bottom-in-react
  */
 import React from 'react';
+import Home from './ViewHome';
 import {useParams} from 'react-router-dom';
 import {Link} from 'react-router-dom';
 import {fetchMessages, fetchThread, fetchDMs, fetchDMThread} from './Fetcher';
@@ -13,6 +14,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
+import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -253,6 +255,7 @@ function Messages(props) {
 
   return (
     <>
+      {isWidthUp('sm', props.width) && <Home />}
       <div className={classes.paper}>
         <div key={error}>{}</div>
         <Toolbar />
@@ -309,4 +312,4 @@ function Messages(props) {
   );
 }
 
-export default Messages;
+export default withWidth()(Messages);

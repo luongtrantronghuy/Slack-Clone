@@ -4,12 +4,18 @@ import {makeStyles} from '@material-ui/core/styles';
 import Fab from '@material-ui/core/Fab';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles((theme) => ({
   title: {
-    flexGrow: 1,
-    marginRight: theme.spacing(2),
     marginLeft: '10px',
+    [theme.breakpoints.up('sm')]: {
+      marginRight: '10px',
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexGrow: 1,
+      marginRight: theme.spacing(2),
+    },
   },
 }));
 
@@ -45,7 +51,7 @@ function TopBar(props) {
 
   // grab channel name if we're in one
   const getDirectory = () => {
-    if (pathname !== '/') {
+    if (pathname !== '/' && !isWidthUp('sm', props.width)) {
       switch (location) {
       case 'messages':
         if (thread) return 'Thread ' + chann;
@@ -85,7 +91,7 @@ function TopBar(props) {
   return (
     <>
       { // back button
-        pathname !== '/' &&
+        pathname !== '/' && !isWidthUp('sm', props.width) &&
         <Fab color='inherit' style={butBack} onClick={() => history.goBack()}>
           <ExpandMoreIcon color='primary' fontSize='small'/>
         </Fab>
@@ -94,7 +100,7 @@ function TopBar(props) {
         {getDirectory()}
       </Typography>
       { // workspace chooser
-        pathname === '/' &&
+        (pathname === '/' || isWidthUp('sm', props.width)) &&
         <Fab
           color='inherit'
           style={(props.ddOpen) ? butUp : but}
@@ -107,4 +113,4 @@ function TopBar(props) {
   );
 }
 
-export default TopBar;
+export default withWidth()(TopBar);
