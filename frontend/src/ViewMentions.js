@@ -3,9 +3,11 @@
  * https://www.w3schools.com/tags/ref_urlencode.asp
  */
 import React from 'react';
+import Home from './ViewHome';
 import {fetchSearch} from './Fetcher';
 import {makeStyles, TableBody, TableRow} from '@material-ui/core';
 import {ListItem, Divider, List} from '@material-ui/core';
+import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles((theme) => ({
   notfound: {
@@ -28,6 +30,9 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '5%',
     // marginRight: '10%',
     width: '90%',
+    [theme.breakpoints.up('md')]: {
+      margin: '0 225px',
+    },
   },
   inputField: {
     width: '100%',
@@ -113,6 +118,7 @@ function Mentions(props) {
   return (
     <>
       <div>{error}</div>
+      {isWidthUp('sm', props.width) && <Home />}
       <List className={classes.root}>
         <TableBody>
           {messages.map((message) => {
@@ -134,4 +140,4 @@ function Mentions(props) {
   );
 }
 
-export default Mentions;
+export default withWidth()(Mentions);
