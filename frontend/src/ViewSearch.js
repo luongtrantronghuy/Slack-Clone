@@ -1,7 +1,9 @@
 import React from 'react';
+import Home from './ViewHome.js';
 import {fetchSearch} from './Fetcher';
 import {TableBody, TableRow, TextField} from '@material-ui/core';
 import {Hidden, makeStyles, ListItem, Divider, List} from '@material-ui/core';
+import withWidth, {isWidthUp} from '@material-ui/core/withWidth';
 
 const useStyles = makeStyles((theme) => ({
   notfound: {
@@ -39,12 +41,21 @@ const useStyles = makeStyles((theme) => ({
     display: 'grid',
     justifyContent: 'center',
     gridTemplateColumns: '100%',
-    margin: '0 auto',
     marginTop: '10px',
     width: '90%',
     maxWidth: '1000px',
     height: 'auto',
     zIndex: 10000,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: 17,
+      margin: '0 auto',
+      paddingLeft: '120px',
+    },
+    [theme.breakpoints.up('md')]: {
+      fontSize: 17,
+      margin: '0 150px',
+      paddingLeft: '120px',
+    },
   },
 }));
 
@@ -119,6 +130,7 @@ function Search(props) {
 
   return (
     <>
+      {isWidthUp('sm', props.width) && <Home />}
       <Hidden xsDown>
         <div>
           <form noValidate autoComplete="off">
@@ -171,4 +183,4 @@ function Search(props) {
   );
 }
 
-export default Search;
+export default withWidth()(Search);
